@@ -1,0 +1,46 @@
+#+STARTUP: indent
+#+STARTUP: showall
+#+STARTUP: logdone
+
+* Server
+** [#A] API to support returning N hands
+** DONE Change TCP port from 3000 to 80 for AWS
+CLOSED: [2013-11-18 Mon 19:34]
+** DONE [#A] Need to add in some 'near-passes' to the output
+CLOSED: [2013-12-27 Fri 15:33]
+e.g. passes with 10 or 11 HCP but no rule of 20
+** DONE [#A] Pre-emptive bids e.g. 3C
+CLOSED: [2013-12-27 Fri 15:33]
+** DONE [#B] Shape the output - too many 'normal' hands.
+CLOSED: [2013-12-27 Fri 15:33]
+*** Need more 'unusual' ones in the mix - 2C, 2NT, pre-empts, rule-20
+Even though 2NT is unusual, need to include it more
+** [#C] Support for other conventions
+** Handle good 9-card prempt at the 5-level.
+** Add Vulnerability
+*** e.g. when you have 3 Aces & balanced => open if you're non-vul
+
+* Mobile
+** [#A] Handle Network Failure
+** [#A] Handle asking for N hands and storing them locally
+** INPROGRESS [#B] Feedback on bid - correct/incorrect
+** DONE [#B] Disable bid button until a bid is made
+CLOSED: [2013-12-27 Fri 15:33]
+** [#B] Helper on 1st hand - pulse the bid or show a hand icon pointing to it
+** [#B] Colors in the button suits
+** [#B] Add links to 'Rules'
+*** Balanced Hand
+*** Rule of 20
+*** 2C openings
+*** Pre-emptive bids
+
+** Animations & Graphics
+*** Overall look
+*** Logo
+*** Shuffling of cards
+*** Background / Splash screen
+*** Buttons 
+** [#C] Score Sheet
+
+* Other
+** Git branch for development and "other conventions"

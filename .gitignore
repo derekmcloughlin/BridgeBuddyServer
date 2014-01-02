@@ -5,3 +5,12 @@ cabal-dev
 *.chi
 *.chs.h
 .virthualenv
+*.sqlite3
+.hsenv*
+.*.un~
+.cabal-sandbox
+BridgeBuddy
+populate_weighted_queue
+ScottyWebServer
+.vagrant
+Vagrantfile
