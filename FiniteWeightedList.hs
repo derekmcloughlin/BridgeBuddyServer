@@ -7,8 +7,6 @@ import qualified Data.Map as Map
 import System.Random.Shuffle
 import Data.Maybe
 
-import Cards
-
 data FiniteWeightedList a = 
     FiniteWeightedList {
         weights :: Map.Map String Int,
