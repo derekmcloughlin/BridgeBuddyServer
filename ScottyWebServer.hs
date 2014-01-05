@@ -15,7 +15,7 @@ import Cards
 
 main = scotty 3000 $ do
 
-    get "/testjsonqueue" $ do
+    get "/hand" $ do
         bs <- liftIO $ connectBeanstalk "127.0.0.1" "11300"
         e <- liftIO $ E.tryJust (guard . isTimedOutException) (reserveJobWithTimeout bs 1)
 
