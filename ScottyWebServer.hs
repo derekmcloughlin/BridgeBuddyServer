@@ -3,15 +3,12 @@ import Web.Scotty
 
 import qualified Data.Aeson as Aeson
 import Network.Beanstalk
-import qualified Control.Exception as E
 import Control.Monad
 import Control.Monad.IO.Class
 
 import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Control.Exception as E
-
-import Cards
 
 main = scotty 3000 $ do
 
@@ -29,8 +26,10 @@ main = scotty 3000 $ do
                                        Nothing -> Aeson.Null
                         liftIO $ deleteJob bs (job_id job)
                         return oJson
-                    Left _    -> do
+                    Left _    -> 
                         -- Timeout
                         return Aeson.Null
         json j 
+
+    get "/test" $ html "OK"
 
