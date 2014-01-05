@@ -1,6 +1,5 @@
 module CardsTest where
 
-import Prelude (fst)
 import Test.HUnit
 import Cards
 
