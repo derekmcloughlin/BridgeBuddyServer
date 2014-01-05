@@ -25,8 +25,8 @@ data Bid =  Club Int    |
             Pass
             deriving (Eq, Ord)
 
-type Hand = [Card]
 type Card = (Suit, Rank)
+type Hand = [Card]
 type Deck = [Card]
 type SuitHolding = [Card]
 type TableHands = [(Player, Hand)]
