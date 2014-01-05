@@ -5,7 +5,6 @@ module Cards where
 import System.Random.Shuffle
 import Control.Monad.Writer
 import Data.List
-import Prelude hiding (putStr)
 
 import Data.Aeson (Value(String), toJSON, ToJSON, Object, object)
 
