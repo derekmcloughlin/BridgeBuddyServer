@@ -13,7 +13,7 @@ import Control.Applicative
 import FiniteWeightedList
 import System.Random.Shuffle
 
-handList :: FiniteWeightedList Hand
+handList :: FiniteWeightedList String Hand
 handList = FiniteWeightedList {
     weights = Map.fromList [
         ("Pass", 10),

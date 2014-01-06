@@ -38,16 +38,16 @@ module FiniteWeightedList where
 import qualified Data.Map as Map
 import Data.Maybe
 
-data FiniteWeightedList a = 
+data FiniteWeightedList c a = 
     FiniteWeightedList {
-        weights :: Map.Map String Int,
-        counts :: Map.Map String Int,
+        weights :: Map.Map c Int,
+        counts :: Map.Map c Int,
         items :: [a],
         maxItems :: Int
     }
 
 -- Add a single item to the list
-addItem :: FiniteWeightedList a -> String -> a -> FiniteWeightedList a
+addItem :: (Ord c) => FiniteWeightedList c a -> c -> a -> FiniteWeightedList c a
 addItem fwl key item 
     | total_count == maxItems fwl      = fwl   -- List is completely full, don't add any more
     | current_item_pc >= target_item_pc = fwl  -- List has reached it's percentage quota of 'item' - don't add any more
@@ -67,6 +67,7 @@ addItem fwl key item
 
 -- Add a list of items to the data structure.
 -- A function 'f' that gives us the group string is provided.
-addList :: FiniteWeightedList a -> [a] -> (a -> String) -> FiniteWeightedList a
+addList :: (Ord c) => FiniteWeightedList c a -> [a] -> (a -> c) -> FiniteWeightedList c a
 addList fwl xs f = foldl (\ fwl x -> addItem fwl (f x) x) fwl xs
+
 
