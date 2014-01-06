@@ -92,10 +92,10 @@ showCard c = show (getSuit c) ++ " " ++ show (getRank c)
 
 -- Display unicode symbols for suits
 instance Show Suit where
-   show Clubs = "\9827"
-   show Diamonds = "\9830"
-   show Hearts = "\9829"
-   show Spades = "\9824"
+   show Clubs = "C"
+   show Diamonds = "D"
+   show Hearts = "H"
+   show Spades = "S"
 
 instance Show Rank where
     show Ace = "A"
@@ -114,11 +114,10 @@ instance Show Rank where
 
 instance Show Bid where
     show Pass = "Pass"
-    show (Trump Clubs n) = show n ++ "C"
-    show (Trump Diamonds n) = show n ++ "D"
-    show (Trump Hearts n) = show n ++ "H"
-    show (Trump Spades n) = show n ++ "S"
+    show (Trump suit n) = show n ++ show suit 
     show (NT n) = show n ++ "NT"
+    show (Dbl) = "Dbl"
+    show (ReDbl) = "ReDbl"
 
 showHolding :: SuitHolding -> String
 showHolding (x:xs) = show (getRank x) ++ " " ++ showHolding xs
