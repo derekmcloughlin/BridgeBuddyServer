@@ -151,8 +151,8 @@ suitLength :: Suit -> Hand -> (Suit, Int)
 suitLength  suit hand = (suit, length $ suitHolding suit hand)
 
 -- Helper function to sort a suit by the length
-sortByLength :: (Suit, Int) -> (Suit, Int) -> Ordering
-sortByLength (_, n1) (_, n2) = compare n1 n2 -- ignore the suits and just look at the length
+compareByLength :: (Suit, Int) -> (Suit, Int) -> Ordering
+compareByLength (_, n1) (_, n2) = compare n1 n2 -- ignore the suits and just look at the length
     
 -- A balanced hand has no voids, no singleton and at most one doubleton
 -- The shape of the hand can only be one of 5332, 4333 or 4432.
@@ -175,7 +175,7 @@ isWeak1NTHand hand = isBalanced hand && hcp hand `elem` [12 .. 14]
 -- Sort a hand by the length of suits. If there are 2 or 3 equal-length suits, sort by Suit descending
 longestSuits :: Hand -> [(Suit, Int)]
 longestSuits hand = reverse [p | p <- suit_lengths, snd p == snd (head suit_lengths)]
-    where suit_lengths = sortBy (flip sortByLength) $ suitLengths hand
+    where suit_lengths = sortBy (flip compareByLength) $ suitLengths hand
 
 -- Rules for bidding suits.
 -- This relies on the array being sorted by suit. 
@@ -268,7 +268,7 @@ hasRankInSuit hand suit rank = (suit, rank) `elem` cardsInSuit
 -- longest suits plus your HCP >= 20 then make a bid
 ruleOfTwenty :: Hand -> Bool
 ruleOfTwenty hand = hcp hand `elem` [10, 11] && (hcp hand + sum [snd q | q <- twoLongestSuits]) >= 20
-    where twoLongestSuits = take 2 $ sortBy (flip sortByLength) $ suitLengths hand
+    where twoLongestSuits = take 2 $ sortBy (flip compareByLength) $ suitLengths hand
 
 -- Make an opening bid
 openingBid :: Hand -> (Bid, [String])
