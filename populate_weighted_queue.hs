@@ -39,9 +39,9 @@ main = do
     args <- getArgs
     bs <- connectBeanstalk "127.0.0.1" "11300"
     let num_decks =
-            case length args of 
-                0 -> 1
-                _ -> read (head args) :: Int
+            case args of
+                [] -> 1
+                (x:_) -> (read x) :: Int
 
     -- Helper function for mapM. These functions take 1 arg
     -- but we're ignoring it.

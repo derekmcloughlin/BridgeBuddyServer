@@ -8,9 +8,9 @@ main :: IO ()
 main = do
     args <- getArgs
     let num_decks =
-            case length args of 
-                0 -> 1
-                _ -> read (head args) :: Int
+            case args of
+                [] -> 1
+                (x:_) -> (read x) :: Int
 
     forM_ [1 .. num_decks] $ \_ -> do
         hand <- getBiddableHand
