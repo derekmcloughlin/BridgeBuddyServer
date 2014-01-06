@@ -17,26 +17,14 @@ data Rank = Ace | King | Queen | Jack | Ten | Nine | Eight | Seven | Six | Five 
 data Player = North | East | West | South
               deriving (Show, Eq, Ord, Enum)
 
-data Bid =  Club Int    | 
-            Diamond Int |
-            Heart Int   |
-            Spade Int   |
-            NT Int      |
-            Pass
-            deriving (Eq, Ord)
+data Bid = Trump Suit Int | NT Int | Pass | Dbl | ReDbl 
+           deriving (Eq, Ord)
 
 type Card = (Suit, Rank)
 type Hand = [Card]
 type Deck = [Card]
 type SuitHolding = [Card]
 type TableHands = [(Player, Hand)]
-
--- This is ugly. We're using 'Clubs' to mean the suit, but 'Club' to mean the bid.
-makeBid :: Suit -> Int -> Bid
-makeBid Clubs n    = Club n
-makeBid Diamonds n = Diamond n
-makeBid Hearts n   = Heart n
-makeBid Spades n   = Spade n
 
 getSuit :: Card -> Suit
 getSuit (s, _) = s
@@ -126,10 +114,10 @@ instance Show Rank where
 
 instance Show Bid where
     show Pass = "Pass"
-    show (Club n) = show n ++ "C"
-    show (Diamond n) = show n ++ "D"
-    show (Heart n) = show n ++ "H"
-    show (Spade n) = show n ++ "S"
+    show (Trump Clubs n) = show n ++ "C"
+    show (Trump Diamonds n) = show n ++ "D"
+    show (Trump Hearts n) = show n ++ "H"
+    show (Trump Spades n) = show n ++ "S"
     show (NT n) = show n ++ "NT"
 
 showHolding :: SuitHolding -> String
@@ -183,25 +171,25 @@ longestSuits hand = reverse [p | p <- suit_lengths, snd p == snd (head suit_leng
 bidLongestSuit :: [(Suit, Int)] -> Writer [String] Bid
 bidLongestSuit [(s, _)] = do
     tell ["Bid the longest suit."]
-    return (makeBid s 1)
+    return (Trump s 1)
 bidLongestSuit [(Spades, 4), (Hearts, 4)] = do
     tell ["4 Spades and 4 Hearts - bid the hearts."]
-    return (Heart 1) 
+    return (Trump Hearts 1) 
 bidLongestSuit [(s, _), (_, _)] = do
     tell ["Bid the higher ranking of two equal-length suits."]
-    return (makeBid s 1)
+    return (Trump s 1)
 bidLongestSuit [(Spades, 4), (Hearts, 4),   (Diamonds, 4)] = do
     tell ["Shape is 4441 with a singleton club - bid the middle of the 3 touching suits."]
-    return (Heart 1)
+    return (Trump Hearts 1)
 bidLongestSuit [(Hearts, 4), (Diamonds, 4), (Clubs, 4)] = do
     tell ["Shape is 4441 with a singleton spade - bid the middle of the 3 touching suits."]
-    return (Diamond 1) 
+    return (Trump Diamonds 1) 
 bidLongestSuit [(Spades, 4), (Hearts, 4),   (Clubs, 4)] = do
     tell ["Shape is 4441 with a singleton diamond - bid the suit below."]
-    return (Club 1)    
+    return (Trump Clubs 1)    
 bidLongestSuit [(Spades, 4), (Diamonds, 4), (Clubs, 4)] = do
     tell ["Shape is 4441 with a singleton heart - bid the suit below."]
-    return (Diamond 1)
+    return (Trump Diamonds 1)
 bidLongestSuit _ = do
     tell ["Unknown configuration for longest suit bid - pass."]
     return Pass
@@ -217,10 +205,10 @@ openingBidWithLog :: Hand -> Writer [String] Bid
 openingBidWithLog hand 
     | isWeak1NTHand hand && hasGoodFiveCard (spades hand) = do
         tell ["Balanced hand, but has a five card major in Spades."]
-        return (Spade 1)
+        return (Trump Spades 1)
     | isWeak1NTHand hand && hasGoodFiveCard (hearts hand) = do
         tell ["Balanced hand, but has a five card major in Hearts."]
-        return (Heart 1)
+        return (Trump Hearts 1)
     | isWeak1NTHand hand = do
         tell ["Balanced hand 12-14 points."]
         return (NT 1)
@@ -238,12 +226,12 @@ openingBidWithLog hand
         bidSuit hand
     | hcp hand >= 23 = do
         tell ["More than 23 points - artificial 2C bid."]
-        return (Club 2)
+        return (Trump Clubs 2)
     | fst (isPremptable hand) = do
         let (_, longestSuit) = isPremptable hand
         tell ["Weak hand with 7-card suit headed by 2 honours."]
         tell ["Opening with a pre-emptive bid at the 3 level."]
-        return (makeBid longestSuit 3)
+        return (Trump longestSuit 3)
     | otherwise = do
         tell ["Too weak to bid."]
         return Pass
