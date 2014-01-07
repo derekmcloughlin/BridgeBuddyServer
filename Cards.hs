@@ -11,10 +11,10 @@ import Data.Aeson (Value(String), toJSON, ToJSON, Object, object)
 data Suit = Clubs | Diamonds | Hearts | Spades
             deriving (Eq, Ord, Enum)
 
-data Rank = Ace | King | Queen | Jack | Ten | Nine | Eight | Seven | Six | Five | Four | Three | Two 
+data Rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace
             deriving (Eq, Ord, Enum)
 
-data Player = North | East | West | South
+data Player = North | East | South | West
               deriving (Show, Eq, Ord, Enum)
 
 data Bid = Trump Suit Int | NT Int | Pass | Dbl | ReDbl 
@@ -33,16 +33,16 @@ getRank :: Card -> Rank
 getRank (_, r) = r
 
 fullDeck :: Deck
-fullDeck = [(suit, value) | suit <- [Clubs .. Spades], value <- [Ace .. Two]]
+fullDeck = [(suit, value) | suit <- [Clubs .. Spades], value <- [Two .. Ace]]
 
 shuffleDeck :: IO Deck
 shuffleDeck = shuffleM fullDeck
 
 dealHands :: Deck -> TableHands
-dealHands deck = [ (North, sort $ take 13 deck),
-                   (East,  sort $ take 13 $ drop 13 deck),
-                   (West,  sort $ take 13 $ drop 26 deck),
-                   (South, sort $ take 13 $ drop 39 deck)]
+dealHands deck = [ (North, reverse . sort $ take 13 deck),
+                   (East,  reverse . sort $ take 13 $ drop 13 deck),
+                   (South, reverse . sort $ take 13 $ drop 39 deck),
+                   (West,  reverse . sort $ take 13 $ drop 26 deck)]
 
 
 -- Helper functions for players
@@ -74,7 +74,7 @@ spades :: Hand -> SuitHolding
 spades = suitHolding Spades
 
 suitHolding :: Suit -> Hand -> SuitHolding
-suitHolding suit hand = sort $ filter (\x -> fst x == suit) hand
+suitHolding suit hand = reverse . sort $ filter (\x -> fst x == suit) hand
 
 -- High Card Point values
 hcp :: Hand -> Int
