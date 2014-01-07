@@ -5,19 +5,19 @@ import Cards
 
 tests :: Test
 tests = TestList [
-      TestCase (assertEqual "test5CardMajorSpades" (Spade 1)   (fst (openingBid testHand5CardMajor)))
-    , TestCase (assertEqual "testRule20_a"         (Spade 1)   (fst (openingBid testHandRule20_a)))
-    , TestCase (assertEqual "testRule20_b"         (Spade 1)   (fst (openingBid testHandRule20_b)))
-    , TestCase (assertEqual "testRule20_c"         (Spade 1)   (fst (openingBid testHandRule20_c)))
-    , TestCase (assertEqual "testRule20_d"         (Pass)      (fst (openingBid testHandRule20_d)))
-    , TestCase (assertEqual "testSuit_a"           (Heart 1)   (fst (openingBid testHandSuit_a)))
-    , TestCase (assertEqual "testSuit_b"           (Heart 1)   (fst (openingBid testHandSuit_b)))
-    , TestCase (assertEqual "testSuit_c"           (Heart 1)   (fst (openingBid testHandSuit_c)))
-    , TestCase (assertEqual "testSuit_d"           (Diamond 1) (fst (openingBid testHandSuit_d)))
-    , TestCase (assertEqual "testSuit_e"           (Diamond 1) (fst (openingBid testHandSuit_e)))
-    , TestCase (assertEqual "testSuit_f"           (Club 1)    (fst (openingBid testHandSuit_f)))
-    , TestCase (assertEqual "testSuit_g"           (Diamond 1) (fst (openingBid testHandSuit_g)))
-    , TestCase (assertEqual "testSuit_h"           (Heart 1)   (fst (openingBid testHandSuit_h)))
+      TestCase (assertEqual "test5CardMajorSpades" (Trump Spades 1)   (fst (openingBid testHand5CardMajor)))
+    , TestCase (assertEqual "testRule20_a"         (Trump Spades 1)   (fst (openingBid testHandRule20_a)))
+    , TestCase (assertEqual "testRule20_b"         (Trump Spades 1)   (fst (openingBid testHandRule20_b)))
+    , TestCase (assertEqual "testRule20_c"         (Trump Spades 1)   (fst (openingBid testHandRule20_c)))
+    , TestCase (assertEqual "testRule20_d"         (Pass)            (fst (openingBid testHandRule20_d)))
+    , TestCase (assertEqual "testSuit_a"           (Trump Hearts 1)   (fst (openingBid testHandSuit_a)))
+    , TestCase (assertEqual "testSuit_b"           (Trump Hearts 1)   (fst (openingBid testHandSuit_b)))
+    , TestCase (assertEqual "testSuit_c"           (Trump Hearts 1)   (fst (openingBid testHandSuit_c)))
+    , TestCase (assertEqual "testSuit_d"           (Trump Diamonds 1) (fst (openingBid testHandSuit_d)))
+    , TestCase (assertEqual "testSuit_e"           (Trump Diamonds 1) (fst (openingBid testHandSuit_e)))
+    , TestCase (assertEqual "testSuit_f"           (Trump Clubs 1)    (fst (openingBid testHandSuit_f)))
+    , TestCase (assertEqual "testSuit_g"           (Trump Diamonds 1) (fst (openingBid testHandSuit_g)))
+    , TestCase (assertEqual "testSuit_h"           (Trump Hearts 1)   (fst (openingBid testHandSuit_h)))
     , TestCase (assertBool "isPremptable_a"        (fst (isPremptable testHandPrempt_a)))
     ]
 
