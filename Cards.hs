@@ -5,6 +5,7 @@ module Cards where
 import System.Random.Shuffle
 import Control.Monad.Writer
 import Data.List
+import Data.List.Split
 
 import Data.Aeson (Value(String), toJSON, ToJSON, Object, object)
 
@@ -39,11 +40,7 @@ shuffleDeck :: IO Deck
 shuffleDeck = shuffleM fullDeck
 
 dealHands :: Deck -> TableHands
-dealHands deck = [ (North, reverse . sort $ take 13 deck),
-                   (East,  reverse . sort $ take 13 $ drop 13 deck),
-                   (South, reverse . sort $ take 13 $ drop 39 deck),
-                   (West,  reverse . sort $ take 13 $ drop 26 deck)]
-
+dealHands deck = zip [North .. West] (map sort $ chunksOf 13 deck)
 
 -- Helper functions for players
 
