@@ -13,8 +13,7 @@ main = do
                 (x:_) -> (read x) :: Int
 
     forM_ [1 .. num_decks] $ \_ -> do
-        hand <- getBiddableHand
-        printHand "?" hand
+        printDeck
 
 printDeck :: IO ()
 printDeck = do
@@ -23,11 +22,11 @@ printDeck = do
     printHands hands
 
 printHands :: TableHands -> IO ()
-printHands hands = do
-    printHand "North" $ north hands
-    printHand "East" $ east hands
-    printHand "South" $ south hands
-    printHand "West" $ west hands
+printHands hands = mapM_ (\(s, f) -> printHand s (f hands)) players
+    where players = [ ("North", north),
+                      ("East", east),
+                      ("South", south),
+                      ("West", west)]
 
 printHand :: String -> Hand -> IO ()
 printHand position hand = do
