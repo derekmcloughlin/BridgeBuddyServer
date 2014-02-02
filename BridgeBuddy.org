@@ -1,18 +1,13 @@
 #+STARTUP: indent
 #+STARTUP: showall
-#+STARTUP: logdone
 
 * Server
 ** [#A] API to support returning N hands
 ** DONE Change TCP port from 3000 to 80 for AWS
-CLOSED: [2013-11-18 Mon 19:34]
 ** DONE [#A] Need to add in some 'near-passes' to the output
-CLOSED: [2013-12-27 Fri 15:33]
 e.g. passes with 10 or 11 HCP but no rule of 20
 ** DONE [#A] Pre-emptive bids e.g. 3C
-CLOSED: [2013-12-27 Fri 15:33]
 ** DONE [#B] Shape the output - too many 'normal' hands.
-CLOSED: [2013-12-27 Fri 15:33]
 *** Need more 'unusual' ones in the mix - 2C, 2NT, pre-empts, rule-20
 Even though 2NT is unusual, need to include it more
 ** [#C] Support for other conventions
@@ -23,9 +18,8 @@ Even though 2NT is unusual, need to include it more
 * Mobile
 ** [#A] Handle Network Failure
 ** [#A] Handle asking for N hands and storing them locally
-** INPROGRESS [#B] Feedback on bid - correct/incorrect
+** DONE [#B] Feedback on bid - correct/incorrect
 ** DONE [#B] Disable bid button until a bid is made
-CLOSED: [2013-12-27 Fri 15:33]
 ** [#B] Helper on 1st hand - pulse the bid or show a hand icon pointing to it
 ** [#B] Colors in the button suits
 ** [#B] Add links to 'Rules'
@@ -44,3 +38,107 @@ CLOSED: [2013-12-27 Fri 15:33]
 
 * Other
 ** Git branch for development and "other conventions"
+
+* Reddit Feedback
+
+** DONE Arg Handling
+case length args of
+            0 -> 1
+            _ -> read (head args) :: Int
+is better expressed as
+case args of
+    [] -> 1
+    (x:_) -> (read x) :: Int
+
+*** TableHands
+Is there a particular reason to use 
+
+    type TableHands = [(Player, Hand)] 
+
+rather than 
+
+    type TableHands = Player -> Hand
+
+?
+
+** read
+read is partial. From the context it looks like it's being used for
+command line  parsing, and if the user gives a bad input the only
+message will  be something like
+
+    Prelude.read: no parse
+
+which might mystify you even if you wrote the program yourself. Check
+out readMaybe, which is a recent addition to the standard library
+(import  Text.Read, I think) or if your command line parsing needs are
+anything  beyond trivial you will want to look into one of the
+libraries that  does this; optparse-applicative is pretty good for
+relatively  straightforward needs.
+
+** SuitHolding
+
+This looks like good work! My one comment is that you seem to be
+relying a bit much on pre-built data structures. For example, a Hand
+could be represented as 
+
+    data Hand = Hand {clubs :: SuitHolding, diamonds :: SuitHolding, hearts :: SuitHolding, spades :: SuitHolding}
+
+This gives you a static guarentee that the hand will be divided into
+suits, and allows easy access to each part, while also automatically
+creating the clubs, diamonds, hearts, and  spades functions.
+Similarly, TableHands could  be defined as
+
+    data TableHands = TableHands {north :: Hand, east :: Hand, south :: Hand, west :: Hand}
+
+This approach has additional advantages in terms of type classes.
+Instead of writing 
+
+    showHolding
+
+, you can write 
+
+    instance Show SuitHolding. 
+
+Instead of writing 
+    showHand
+
+, you can write 
+
+    instance Show Hand. 
+
+The last, and arguably most important advantage of custom data structures is that they prevent bugs early. A Hand should always be sorted, but there is nothing in the list structure that enforces that. In fact you could accidentally pass a Deck, which is almost certainly not sorted, into a function that expects a Hand. Similarly, all the cards in a SuitHolding should have the same suit, but there is nothing in the type that enforces that, and a full Hand could be passed in where a SuitHolding was expected.
+
+In summary, I'd use the following data structures:
+
+    data Hand = Hand {clubs :: SuitHolding, diamonds :: SuitHolding, hearts :: SuitHolding, spades :: SuitHolding}
+    data Card = Card Suit Rank
+    newtype Deck = Deck [Card]
+    newtype SuitHolding = SuitHolding (Set Rank) -- You never actually use the suits of the cards
+    data TableHands = TableHands {north :: Hand, east :: Hand, south :: Hand, west :: Hand}
+
+** DONE I like your idea of using a Trump constructor to simplify the Bid type.
+** DONE The ordering of the Rank type seems backwards. I though that face cards and the ace were the highest ranks, not the lowest, though I don't actually know bridge well.
+** DONE The name sortByLength seems misleading. To me, that implies a function of type [(Suit, Int)] -> [(Suit, Int)] which sorts by the length part. Instead, you might call it compareByLength.
+** DONE I don't quite understand what the FiniteWeightedList is for, but you could make it parametric in the key type - there is nothing in that code that requires it to be a string, and you might want to use a more exact type as a key later.
+
+** DONE Regarding the order of Rank, you're automatically deriving Ord. Do you realise that in your scheme Two > Ace = True?
+
+** DONE for function dealHands, I would use
+import Data.List.Split
+dealHands deck = zip [North..South] (map sort $ chunksOf 13 deck)
+
+** Universe
+As unlikely as it sounds in this case, you might also want to think about replacing [North..South] with something more friendly to refactoring; e.g. this will break if he reorders the constructor declarations in the definition of Player. The simplest would be to add Bounded to the deriving clause:
+data Player = North | East | West | South
+              deriving (Show, Eq, Ord, Enum, Bounded)
+Then you can use [minBound..maxBound] instead of [North..South]. I also can't help but give a plug for universe; to use it, you would additionally add
+instance Universe Player
+and then you could use universe instead of [North..South]. If you add Universe (and Finite) instances for your other base types, you could also replace fullDeck with universe (or universeF) everywhere. It's a bit more boilerplate, but it's less actual code (yay!).
+
+** DONE I think this sounds about right:
+
+data Bid = Trump Suit Int | NT Int | Pass | Dbl | ReDbl | YellAtDirector
+Might as well go for completeness! 
+
+** TODO Convention Cards
+Oh, it would be so beautiful if we abstracted convention cards into a type and then implemented a bidder that bid according to a convention card
