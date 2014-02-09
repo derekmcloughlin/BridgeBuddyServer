@@ -18,7 +18,8 @@ tests = TestList [
     , TestCase (assertEqual "testSuit_f"           (Trump Clubs 1)    (fst (openingBid testHandSuit_f)))
     , TestCase (assertEqual "testSuit_g"           (Trump Diamonds 1) (fst (openingBid testHandSuit_g)))
     , TestCase (assertEqual "testSuit_h"           (Trump Hearts 1)   (fst (openingBid testHandSuit_h)))
-    , TestCase (assertBool "isPremptable_a"        (fst (isPremptable testHandPrempt_a)))
+    , TestCase (assertBool  "isPremptable_a"       (fst (isPremptable testHandPrempt_a)))
+    , TestCase (assertEqual "playingTricks_a"      6 (playingTricks testHandRule20_a))
     ]
 
 -- Test data 
