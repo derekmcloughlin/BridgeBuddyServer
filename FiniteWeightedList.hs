@@ -3,7 +3,7 @@ Finite Weighted List
 This data structure stores at most N items grouped by a string, with weighted
 distribution of each group.
 
-For example: if we want to store a bridge hand and it's bid but ensure that we have
+For example: if we want to store a bridge hand and its bid but ensure that we have
 a certain distribution of 'rare' bids (e.g. 3C), then we could use this:
 
     bridgeHands :: FiniteWeightedList Hand
