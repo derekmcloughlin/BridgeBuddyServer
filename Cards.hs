@@ -170,7 +170,7 @@ hasGoodFiveCard cardsInSuit = length cardsInSuit == 5 && hcp cardsInSuit > 0
 
 -- A good 6-card suit is one headed by two honours 
 hasGoodSixCard :: SuitHolding -> Bool
-hasGoodSixCard cardsInSuit = length cardsInSuit >= 6 && hcp cardsInSuit > 0
+hasGoodSixCard suit_holding = length suit_holding >= 6 && length (honours suit_holding) >= 2
 
 isWeak1NTHand :: Hand -> Bool
 isWeak1NTHand hand = isBalanced hand && hcp hand `elem` [12 .. 14]
@@ -268,6 +268,9 @@ isPremptable hand = (hcp hand < 10 && has7cardsuit && has2OfTop3Honours hand lon
 
 has2OfTop3Honours :: Hand -> Suit -> Bool
 has2OfTop3Honours hand suit = length (filter (== True) $ map (hasRankInSuit hand suit) [Ace, King, Queen]) >= 2
+
+honours :: SuitHolding -> [Card]
+honours suit_holding = filter (\(s, r) -> isHonour r) suit_holding 
 
 hasRankInSuit :: Hand -> Suit -> Rank -> Bool
 hasRankInSuit hand suit rank = (suit, rank) `elem` cardsInSuit

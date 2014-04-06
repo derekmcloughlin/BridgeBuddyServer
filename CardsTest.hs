@@ -21,6 +21,7 @@ tests = TestList [
     , TestCase (assertBool  "isPremptable_a"       (fst (isPremptable testHandPrempt_a)))
     , TestCase (assertEqual "playingTricks_a"      6 (playingTricks testHandRule20_a))
     , TestCase (assertEqual "strongOpening_a"      (Just Spades) (hasStrong2Opening testStrong2OpeningHand_a))
+    , TestCase (assertEqual "strongOpening_b"      Nothing (hasStrong2Opening testStrong2OpeningHand_b))
     ]
 
 -- Test data 
@@ -121,8 +122,15 @@ testHandPrempt_a  = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, S
                      (Diamonds, Seven), (Diamonds, Six),
                      (Clubs, Five)]
 
+-- This hand has 19 points and >= 2 honours in the long suit
 testStrong2OpeningHand_a :: Hand
 testStrong2OpeningHand_a = [(Spades, Ace), (Spades, King), (Spades, Queen), (Spades, Ten), (Spades, Eight), (Spades, Three),
                      (Diamonds, King), (Diamonds, Queen), (Diamonds, Jack), (Diamonds, Ten),
                      (Clubs, Ace), (Clubs, Six), (Clubs, Three)]
+
+-- This hand has 16 points but ony 1 honour in spades
+testStrong2OpeningHand_b :: Hand
+testStrong2OpeningHand_b = [(Spades, Queen), (Spades, Ten), (Spades, Nine), (Spades, Eight), (Spades, Five), (Spades, Three),
+                     (Diamonds, Ace), (Diamonds, King), (Diamonds, Queen), (Diamonds, Jack), (Diamonds, Ten),
+                     (Clubs, Ace), (Clubs, Three)]
 
