@@ -238,7 +238,7 @@ openingBidWithLog hand
         tell ["At least 8 playing tricks"]
         tell ["Good 6+ card suit or two good 5-4 suits"]
         tell ["Strong two opening"]
-        return (Pass)   -- TODO
+        return (Trump suit 2) 
     | not (isBalanced hand) && hcp hand `elem` [12 .. 19] = do
         tell ["Unbalanced hand so bid a suit."]
         bidSuit hand
