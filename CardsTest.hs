@@ -20,6 +20,7 @@ tests = TestList [
     , TestCase (assertEqual "testSuit_h"           (Trump Hearts 1)   (fst (openingBid testHandSuit_h)))
     , TestCase (assertBool  "isPremptable_a"       (fst (isPremptable testHandPrempt_a)))
     , TestCase (assertEqual "playingTricks_a"      6 (playingTricks testHandRule20_a))
+    , TestCase (assertEqual "strongOpening_a"      (Just Spades) (hasStrong2Opening testStrong2OpeningHand_a))
     ]
 
 -- Test data 
@@ -120,6 +121,8 @@ testHandPrempt_a  = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, S
                      (Diamonds, Seven), (Diamonds, Six),
                      (Clubs, Five)]
 
-
-
+testStrong2OpeningHand_a :: Hand
+testStrong2OpeningHand_a = [(Spades, Ace), (Spades, King), (Spades, Queen), (Spades, Ten), (Spades, Eight), (Spades, Three),
+                     (Diamonds, King), (Diamonds, Queen), (Diamonds, Jack), (Diamonds, Ten),
+                     (Clubs, Ace), (Clubs, Six), (Clubs, Three)]
 

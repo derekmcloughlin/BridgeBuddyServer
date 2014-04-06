@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE PatternGuards #-}
 
 module Cards where
 
@@ -119,8 +120,16 @@ instance Show Bid where
 
 showHonour :: Rank -> String
 showHonour r 
-    | r `elem` [Ace, King, Queen, Jack, Ten] = show r 
+    | isHonour r = show r 
     | otherwise = "x"
+
+isHonour :: Rank -> Bool
+isHonour Ace = True
+isHonour King = True
+isHonour Queen = True
+isHonour Jack = True
+isHonour _ = False
+
 
 showHolding :: SuitHolding -> String
 showHolding (x:xs) = show (getRank x) ++ " " ++ showHolding xs
@@ -158,6 +167,10 @@ hasGoodFiveCardMajor hand = hasGoodFiveCard (spades hand) || hasGoodFiveCard (he
 -- A good 5-card suit is one headed by an honour (=> at least a Jack => hcp > 0)
 hasGoodFiveCard :: SuitHolding -> Bool
 hasGoodFiveCard cardsInSuit = length cardsInSuit == 5 && hcp cardsInSuit > 0
+
+-- A good 6-card suit is one headed by two honours 
+hasGoodSixCard :: SuitHolding -> Bool
+hasGoodSixCard cardsInSuit = length cardsInSuit >= 6 && hcp cardsInSuit > 0
 
 isWeak1NTHand :: Hand -> Bool
 isWeak1NTHand hand = isBalanced hand && hcp hand `elem` [12 .. 14]
@@ -220,6 +233,12 @@ openingBidWithLog hand
     | isBalanced hand && hcp hand `elem` [15 .. 19] = do 
         tell ["Balanced hand but too many points for 1NT so bid a suit."]
         bidSuit hand
+    | (Just suit) <- hasStrong2Opening hand = do
+        tell ["Between 16 and 22 points"]
+        tell ["At least 8 playing tricks"]
+        tell ["Good 6+ card suit or two good 5-4 suits"]
+        tell ["Strong two opening"]
+        return (Pass)   -- TODO
     | not (isBalanced hand) && hcp hand `elem` [12 .. 19] = do
         tell ["Unbalanced hand so bid a suit."]
         bidSuit hand
@@ -253,6 +272,24 @@ has2OfTop3Honours hand suit = length (filter (== True) $ map (hasRankInSuit hand
 hasRankInSuit :: Hand -> Suit -> Rank -> Bool
 hasRankInSuit hand suit rank = (suit, rank) `elem` cardsInSuit
                                where cardsInSuit = suitHolding suit hand
+-- Strong 2 Opening
+-- 16 - 22 points
+-- 8 playing tricks
+-- Good 6+ card in Spades, Hearts or Diamonds (2 Clubs is an artificial bid and isn't used here).
+-- or good 5-4 suits
+hasStrong2Opening :: Hand -> Maybe Suit
+hasStrong2Opening hand 
+                | isStrongInPoints == False = Nothing
+                | otherwise = strongSuit
+            where isStrongInPoints = not (isBalanced hand) && 
+                        hcp hand `elem` [16 .. 22] && 
+                        playingTricks hand >= 8 
+                  strongSuit 
+                      | hasGoodSixCard (spades hand)  = Just Spades
+                      | hasGoodSixCard (hearts hand)  = Just Hearts
+                      | hasGoodSixCard (diamonds hand) = Just Diamonds
+                      | otherwise = Nothing
+ 
 
 -- If you have 10 or 11 HCP and the length of your two
 -- longest suits plus your HCP >= 20 then make a bid
@@ -276,7 +313,7 @@ playingTricks hand = floor $ sum [playingTricksInSuit $ suitHolding suit hand | 
 -- We only count max of three cards for the calculation and 
 -- then add the length if the length is > 3.
 playingTricksInSuit :: SuitHolding -> Double
-playingTricksInSuit sh = (playingTricksInHonours $ honours sh) + fromIntegral (lengthTricks sh)
+playingTricksInSuit sh = (playingTricksInHonours $ showHonours sh) + fromIntegral (lengthTricks sh)
     where lengthTricks sh = if length sh > 3 
                             then length sh - 3
                             else 0 
@@ -315,8 +352,8 @@ playingTricksInHonours "A-K-Q"  = 3
 
 playingTricksInHonours _        = 0
 
-honours :: SuitHolding -> String
-honours suitholding = intercalate "-" [showHonour n | (_, n) <- take 3 suitholding]
+showHonours :: SuitHolding -> String
+showHonours suitholding = intercalate "-" [showHonour n | (_, n) <- take 3 suitholding]
 
 -- Make an opening bid
 openingBid :: Hand -> (Bid, [String])
