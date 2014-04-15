@@ -389,3 +389,10 @@ getBiddableHand = do
 rankValues :: Suit -> Hand -> String
 rankValues s hand = unwords [show n | (_, n) <- suitHolding s hand]
 
+
+-- Rotate the table anti-clockwise so that 'East' becomes 'North etc.
+rotate :: TableHands -> TableHands
+rotate th = [(North, east th), (East, south th), (South, west th), (West, north th)]
+
+
+

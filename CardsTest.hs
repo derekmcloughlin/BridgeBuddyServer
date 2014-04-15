@@ -134,3 +134,13 @@ testStrong2OpeningHand_b = [(Spades, Queen), (Spades, Ten), (Spades, Nine), (Spa
                      (Diamonds, Ace), (Diamonds, King), (Diamonds, Queen), (Diamonds, Jack), (Diamonds, Ten),
                      (Clubs, Ace), (Clubs, Three)]
 
+
+-- A sample table
+testTable_a :: TableHands
+testTable_a = [
+        (North, [(Clubs, Six), (Clubs, Seven), (Clubs, Nine), (Clubs, Ace), (Diamonds, Two), (Diamonds, Three), (Diamonds, Six), (Hearts, Three), (Hearts, Ten), (Hearts, Jack), (Spades, Three), (Spades, Six), (Spades, King)]), 
+        (East,  [(Clubs, Five), (Clubs, Jack), (Diamonds, Four), (Diamonds, Seven), (Diamonds, Nine), (Diamonds, Jack), (Hearts, Five), (Hearts, Six), (Hearts, Nine), (Spades, Five), (Spades, Seven), (Spades, Nine), (Spades, Jack)]), 
+        (South, [(Clubs, Two), (Clubs, Eight), (Diamonds, Five), (Diamonds, Eight), (Diamonds, Ten), (Diamonds, King), (Diamonds, Ace), (Hearts, Four), (Hearts, Eight), (Hearts, Queen), (Spades, Two), (Spades, Ten), (Spades, Queen)]), 
+        (West,  [(Clubs, Three), (Clubs, Four), (Clubs, Ten), (Clubs, Queen), (Clubs, King), (Diamonds, Queen), (Hearts, Two), (Hearts, Seven), (Hearts, King), (Hearts, Ace), (Spades, Four), (Spades, Eight), (Spades, Ace)])
+    ]
+
