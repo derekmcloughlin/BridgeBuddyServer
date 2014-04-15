@@ -43,6 +43,6 @@ To run the server:
 cabal run BridgeBuddyServer
 ```
 
-Open a browser and go to: http://localhost:3000/testjsonqueue
+Open a browser and go to: http://localhost:3000/openingbid
 
 
