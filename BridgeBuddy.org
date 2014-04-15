@@ -14,6 +14,10 @@ Even though 2NT is unusual, need to include it more
 ** Handle good 9-card prempt at the 5-level.
 ** Add Vulnerability
 *** e.g. when you have 3 Aces & balanced => open if you're non-vul
+** Responses to Opening Bids
+*** TODO With no intervening bid
+*** TODO With an intervening bid
+** Overcalls
 
 * Mobile
 ** [#A] Handle Network Failure
