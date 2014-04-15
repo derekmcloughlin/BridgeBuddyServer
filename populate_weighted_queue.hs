@@ -42,6 +42,7 @@ main :: IO ()
 main = do
     args <- getArgs
     bs <- connectBeanstalk "127.0.0.1" "11300"
+    useTube bs (B.pack "OpeningBids")
     let num_decks =
             case args of
                 [] -> 1
