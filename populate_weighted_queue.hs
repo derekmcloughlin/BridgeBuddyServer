@@ -2,6 +2,7 @@ import System.Environment (getArgs)
 import Control.Monad
 import Control.Monad.Writer
 import Cards
+import CardsJson
 import Data.List
 import Network.Beanstalk
 import Data.Aeson
