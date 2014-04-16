@@ -87,7 +87,7 @@ hcpValue (_, _)     = 0
 showCard :: Card -> String
 showCard c = show (getSuit c) ++ " " ++ show (getRank c)
 
--- Display unicode symbols for suits
+-- Display single-letter codes for suits
 instance Show Suit where
    show Clubs = "C"
    show Diamonds = "D"
