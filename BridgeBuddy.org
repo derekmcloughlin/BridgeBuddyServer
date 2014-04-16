@@ -2,22 +2,8 @@
 #+STARTUP: showall
 
 * Server
-** [#A] API to support returning N hands
-** DONE Change TCP port from 3000 to 80 for AWS
-** DONE [#A] Need to add in some 'near-passes' to the output
-e.g. passes with 10 or 11 HCP but no rule of 20
-** DONE [#A] Pre-emptive bids e.g. 3C
-** DONE [#B] Shape the output - too many 'normal' hands.
-*** Need more 'unusual' ones in the mix - 2C, 2NT, pre-empts, rule-20
-Even though 2NT is unusual, need to include it more
 ** [#C] Support for other conventions
 ** Handle good 9-card prempt at the 5-level.
-** Add Vulnerability
-*** e.g. when you have 3 Aces & balanced => open if you're non-vul
-** Responses to Opening Bids
-*** TODO With no intervening bid
-*** TODO With an intervening bid
-** Overcalls
 
 * Mobile
 ** [#A] Handle Network Failure
@@ -39,9 +25,6 @@ Even though 2NT is unusual, need to include it more
 *** Background / Splash screen
 *** Buttons 
 ** [#C] Score Sheet
-
-* Other
-** Git branch for development and "other conventions"
 
 * Reddit Feedback
 
@@ -110,7 +93,12 @@ Instead of writing
 
     instance Show Hand. 
 
-The last, and arguably most important advantage of custom data structures is that they prevent bugs early. A Hand should always be sorted, but there is nothing in the list structure that enforces that. In fact you could accidentally pass a Deck, which is almost certainly not sorted, into a function that expects a Hand. Similarly, all the cards in a SuitHolding should have the same suit, but there is nothing in the type that enforces that, and a full Hand could be passed in where a SuitHolding was expected.
+The last, and arguably most important advantage of custom data structures is that they 
+prevent bugs early. A Hand should always be sorted, but there is nothing in the 
+list structure that enforces that. In fact you could accidentally pass a Deck, which is almost 
+certainly not sorted, into a function that expects a Hand. Similarly, all the cards in a SuitHolding 
+should have the same suit, but there is nothing in the type that enforces that, and a full Hand 
+could be passed in where a SuitHolding was expected.
 
 In summary, I'd use the following data structures:
 
@@ -122,8 +110,12 @@ In summary, I'd use the following data structures:
 
 ** DONE I like your idea of using a Trump constructor to simplify the Bid type.
 ** DONE The ordering of the Rank type seems backwards. I though that face cards and the ace were the highest ranks, not the lowest, though I don't actually know bridge well.
-** DONE The name sortByLength seems misleading. To me, that implies a function of type [(Suit, Int)] -> [(Suit, Int)] which sorts by the length part. Instead, you might call it compareByLength.
-** DONE I don't quite understand what the FiniteWeightedList is for, but you could make it parametric in the key type - there is nothing in that code that requires it to be a string, and you might want to use a more exact type as a key later.
+** DONE The name sortByLength seems misleading. 
+To me, that implies a function of type [(Suit, Int)] -> [(Suit, Int)] which sorts by the length 
+part. Instead, you might call it compareByLength.
+** DONE I don't quite understand what the FiniteWeightedList is for, but you could make it parametric in 
+the key type - there is nothing in that code that requires it to be a string, and you might want to use 
+a more exact type as a key later.
 
 ** DONE Regarding the order of Rank, you're automatically deriving Ord. Do you realise that in your scheme Two > Ace = True?
 
@@ -132,12 +124,17 @@ import Data.List.Split
 dealHands deck = zip [North..South] (map sort $ chunksOf 13 deck)
 
 ** Universe
-As unlikely as it sounds in this case, you might also want to think about replacing [North..South] with something more friendly to refactoring; e.g. this will break if he reorders the constructor declarations in the definition of Player. The simplest would be to add Bounded to the deriving clause:
+As unlikely as it sounds in this case, you might also want to think about replacing [North..South] with 
+something more friendly to refactoring; e.g. this will break if he reorders the constructor declarations 
+in the definition of Player. The simplest would be to add Bounded to the deriving clause:
 data Player = North | East | West | South
               deriving (Show, Eq, Ord, Enum, Bounded)
-Then you can use [minBound..maxBound] instead of [North..South]. I also can't help but give a plug for universe; to use it, you would additionally add
+Then you can use [minBound..maxBound] instead of [North..South]. I also can't help but give a plug for universe; to 
+use it, you would additionally add
 instance Universe Player
-and then you could use universe instead of [North..South]. If you add Universe (and Finite) instances for your other base types, you could also replace fullDeck with universe (or universeF) everywhere. It's a bit more boilerplate, but it's less actual code (yay!).
+and then you could use universe instead of [North..South]. If you add Universe (and Finite) instances for your other 
+base types, you could also replace fullDeck with universe (or universeF) everywhere. 
+It's a bit more boilerplate, but it's less actual code (yay!).
 
 ** DONE I think this sounds about right:
 
@@ -145,4 +142,5 @@ data Bid = Trump Suit Int | NT Int | Pass | Dbl | ReDbl | YellAtDirector
 Might as well go for completeness! 
 
 ** TODO Convention Cards
-Oh, it would be so beautiful if we abstracted convention cards into a type and then implemented a bidder that bid according to a convention card
+Oh, it would be so beautiful if we abstracted convention cards into a type and then implemented a bidder 
+that bid according to a convention card.
