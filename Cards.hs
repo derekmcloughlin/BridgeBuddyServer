@@ -141,11 +141,11 @@ showHand hand = show Spades ++ "  " ++ showHolding (spades hand) ++ "\n" ++
 
 -- Get the length of all suits in a hand
 suitLengths :: Hand -> [(Suit, Int)]
-suitLengths hand = [suitLength suit hand | suit <- [Clubs .. Spades]]
+suitLengths hand = [(suit, suitLength suit hand) | suit <- [Clubs .. Spades]]
 
 -- Get the length of a suit in a hand
-suitLength :: Suit -> Hand -> (Suit, Int)
-suitLength  suit hand = (suit, length $ suitHolding suit hand)
+suitLength :: Suit -> Hand -> Int
+suitLength  suit hand = length $ suitHolding suit hand
 
 -- Helper function to sort a suit by the length
 compareByLength :: (Suit, Int) -> (Suit, Int) -> Ordering
