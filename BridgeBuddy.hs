@@ -33,6 +33,7 @@ printHand position hand = do
     putStrLn position
     putStrLn $ showHand hand
     putStrLn $ "HCP: " ++ show (hcp hand)
+    putStrLn $ "Playing Tricks: " ++ show (playingTricks hand)
     putStrLn $ "Balanced: " ++ show (isBalanced hand)
     let (bid, reasons) = openingBid hand
     putStrLn $ "Bid: " ++ show bid
