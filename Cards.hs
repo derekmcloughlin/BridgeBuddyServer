@@ -39,7 +39,6 @@ fullDeck = [(suit, value) | suit <- [Clubs .. Spades], value <- [Two .. Ace]]
 shuffleDeck :: IO Deck
 shuffleDeck = shuffleM fullDeck
 
-dealHands :: Deck -> TableHands
 dealHands deck = zip [North .. West] (map sort $ chunksOf 13 deck)
 
 -- Helper functions for players
