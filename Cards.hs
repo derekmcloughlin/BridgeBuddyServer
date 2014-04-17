@@ -375,7 +375,6 @@ openingBid hand = runWriter $ openingBidWithLog hand
 -- Take a dealt deck and return any hands that have an opening bid
 biddableHands :: TableHands -> [Hand]
 biddableHands table_hands = filter (\h -> isBiddable h || isNearlyBiddable h ) hands
---    where hands = [h | (_, h) <- table_hands]
     where hands = [h table_hands | h <- [north, east, south, west] ]
           bid h = fst (openingBid h)
           isBiddable hand = bid hand /= Pass
