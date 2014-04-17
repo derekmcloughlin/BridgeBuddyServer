@@ -24,123 +24,186 @@ tests = TestList [
     , TestCase (assertEqual "strongOpening_b"      Nothing (hasStrong2Opening testStrong2OpeningHand_b))
     ]
 
--- Test data 
+testBalancedHand :: Hand
+testBalancedHand = Hand {
+    spades   = SuitHolding [Ace, King, Nine, Seven ],
+    hearts   = SuitHolding [Queen, Five, Two],
+    diamonds = SuitHolding [King, Nine, Five],
+    clubs    = SuitHolding [Jack, Six, Three]
+    }
+
+testUnbalancedHand :: Hand
+testUnbalancedHand = Hand {
+    spades   = SuitHolding [Ace, King, Nine, Seven, Five],
+    hearts   = SuitHolding [Queen, Five, Two],
+    diamonds = SuitHolding [King],
+    clubs    = SuitHolding [Jack, Six, Four, Three]
+    }
+
+-- Test data
 testHand5CardMajor :: Hand
-testHand5CardMajor = [(Spades, Ace), (Spades, King), (Spades, Nine), (Spades, Seven), (Spades, Five), (Hearts, Queen), (Hearts, Five), (Hearts, Two), (Diamonds, King), (Diamonds, Nine), (Clubs, Jack), (Clubs, Six), (Clubs, Three)]
+testHand5CardMajor = Hand {
+    spades   = SuitHolding [Ace, King, Nine, Seven, Five],
+    hearts   = SuitHolding [Queen, Five, Two],
+    diamonds = SuitHolding [King, Nine],
+    clubs    = SuitHolding [Jack, Six, Three]
+}
 
 -- Should pass
 testHandRule20_a :: Hand
-testHandRule20_a = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, Seven), (Spades, Five),
-                    (Hearts, Queen), (Hearts, Jack), (Hearts, Five), (Hearts, Four), (Hearts, Two),
-                    (Diamonds, Queen), 
-                    (Clubs, Nine), (Clubs, Six)]
+testHandRule20_a = Hand {
+    spades   = SuitHolding [King, Queen, Nine, Seven, Five],
+    hearts   = SuitHolding [Queen, Jack, Five, Four, Two],
+    diamonds = SuitHolding [Queen],
+    clubs    = SuitHolding [Nine, Six]
+}
 
 -- Should pass
 testHandRule20_b :: Hand
-testHandRule20_b = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, Seven), (Spades, Five),
-                    (Hearts, King), (Hearts, Jack), (Hearts, Five), (Hearts, Four),
-                    (Diamonds, Queen), (Diamonds, Nine),
-                    (Clubs, Nine), (Clubs, Six)]
+testHandRule20_b = Hand {
+    spades   = SuitHolding [King, Queen, Nine, Seven, Five],
+    hearts   = SuitHolding [King, Jack, Five, Four],
+    diamonds = SuitHolding [Queen, Nine],
+    clubs    = SuitHolding [Nine, Six]
+}
 
 -- Should pass
 testHandRule20_c :: Hand
-testHandRule20_c = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, Seven), (Spades, Five), (Spades, Two),
-                    (Hearts, King), (Hearts, Jack), (Hearts, Five),
-                    (Diamonds, Queen), 
-                    (Clubs, Nine), (Clubs, Six), (Clubs, Three)]
+testHandRule20_c = Hand {
+    spades   = SuitHolding [King, Queen, Nine, Seven, Five, Two],
+    hearts   = SuitHolding [King, Jack, Five],
+    diamonds = SuitHolding [Queen],
+    clubs    = SuitHolding [Nine, Six, Three]
+}
 
 -- Should fail
 testHandRule20_d :: Hand
-testHandRule20_d = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, Seven), (Spades, Five), (Spades, Two),
-                    (Hearts, King), (Hearts, Jack), (Hearts, Five),
-                    (Diamonds, Jack), 
-                    (Clubs, Nine), (Clubs, Six), (Clubs, Three)]
+testHandRule20_d = Hand {
+    spades   = SuitHolding [King, Queen, Nine, Seven, Five, Two],
+    hearts   = SuitHolding [King, Jack, Five],
+    diamonds = SuitHolding [Jack],
+    clubs    = SuitHolding [Nine, Six, Three]
+}
 
 
 -- Test suit biddng with a 4432 shape - 4 spades, 4 hearts
 testHandSuit_a :: Hand
-testHandSuit_a  = [(Spades, King), (Spades, Queen), (Spades, Jack), (Spades, Eight),
-                   (Hearts, King), (Hearts, Jack), (Hearts, Five), (Hearts, Two),
-                   (Diamonds, Jack), (Diamonds, Six), 
-                   (Clubs, Ace), (Clubs, Six), (Clubs, Three)]
+testHandSuit_a  = Hand {
+    spades   = SuitHolding [King, Queen, Jack, Eight],
+    hearts   = SuitHolding [King, Jack, Five, Two],
+    diamonds = SuitHolding [Jack, Six],
+    clubs    = SuitHolding [Ace, Six, Three]
+}
 
 -- Test suit biddng with a 4432 shape - 4 hearts, 4 Clubs
 testHandSuit_b :: Hand
-testHandSuit_b  = [(Spades, Ace), (Spades, Queen), (Spades, Nine),
-                   (Hearts, King), (Hearts, Jack), (Hearts, Five), (Hearts, Two),
-                   (Diamonds, Jack), (Diamonds, Six), 
-                   (Clubs, Ace), (Clubs, Six), (Clubs, Three), (Clubs, Two)]
+testHandSuit_b  = Hand {
+    spades   = SuitHolding [Ace, Queen, Nine],
+    hearts   = SuitHolding [King, Jack, Five, Two],
+    diamonds = SuitHolding [Jack, Six],
+    clubs    = SuitHolding [Ace, Six, Three, Two]
+}
 
 -- Test suit biddng with a 5422 shape
 testHandSuit_c :: Hand
-testHandSuit_c  = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, Seven),
-                   (Hearts, King), (Hearts, Jack), (Hearts, Five), (Hearts, Three), (Hearts, Two),
-                   (Diamonds, Jack), (Diamonds, Six),
-                   (Clubs, Ace), (Clubs, Six)]
+testHandSuit_c  = Hand {
+    spades   = SuitHolding [King, Queen, Nine, Seven],
+    hearts   = SuitHolding [King, Jack, Five, Three, Two],
+    diamonds = SuitHolding [Jack, Six],
+    clubs    = SuitHolding [Ace, Six]
+}
 
 -- Test suit biddng with a 5521 shape
 testHandSuit_d :: Hand
-testHandSuit_d  = [(Spades, King), 
-                   (Hearts, King), (Hearts, Jack), 
-                   (Diamonds, Jack), (Diamonds, Six), (Diamonds, Five), (Diamonds, Three), (Diamonds, Two),
-                   (Clubs, Ace), (Clubs, King), (Clubs, Five), (Clubs, Three), (Clubs, Two)]
+testHandSuit_d  = Hand {
+    spades   = SuitHolding [King],
+    hearts   = SuitHolding [King, Jack],
+    diamonds = SuitHolding [Jack, Six, Five, Three, Two],
+    clubs    = SuitHolding [Ace, King, Five, Three, Two]
+}
 
 
 -- Test suit biddng with a 4441 shape with a red suit heart singleton => Diamond bid
 testHandSuit_e :: Hand
-testHandSuit_e  = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, Seven),
-                   (Hearts, King), 
-                   (Diamonds, Jack), (Diamonds, Six), (Diamonds, Five), (Diamonds, Three),
-                   (Clubs, Ace), (Clubs, King), (Clubs, Five), (Clubs, Three)]
+testHandSuit_e  = Hand {
+    spades   = SuitHolding [King, Queen, Nine, Seven],
+    hearts   = SuitHolding [King],
+    diamonds = SuitHolding [Jack, Six, Five, Three],
+    clubs    = SuitHolding [Ace, King, Five, Three]
+}
 
 -- Test suit biddng with a 4441 shape with a red suit diamond singleton => Club bid
 testHandSuit_f :: Hand
-testHandSuit_f  = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, Seven),
-                   (Hearts, King), (Hearts, Six), (Hearts, Five), (Hearts, Three),
-                   (Diamonds, Jack), 
-                   (Clubs, Ace), (Clubs, King), (Clubs, Five), (Clubs, Three)]
+testHandSuit_f  = Hand {
+    spades   = SuitHolding [King, Queen, Nine, Seven],
+    hearts   = SuitHolding [King, Six, Five, Three],
+    diamonds = SuitHolding [Jack],
+    clubs    = SuitHolding [Ace, King, Five, Three]
+}
 
 
 -- Test suit biddng with a 4441 shape with a black suit spade singleton => Diamond bid
 testHandSuit_g :: Hand
-testHandSuit_g  = [(Spades, King), 
-                   (Hearts, King), (Hearts, Jack), (Hearts, Three), (Hearts, Two),
-                   (Diamonds, Jack), (Diamonds, Six), (Diamonds, Five), (Diamonds, Three),
-                   (Clubs, Ace), (Clubs, King), (Clubs, Five), (Clubs, Three)]
+testHandSuit_g  = Hand {
+    spades   = SuitHolding [King],
+    hearts   = SuitHolding [King, Jack, Three, Two],
+    diamonds = SuitHolding [Jack, Six, Five, Three],
+    clubs    = SuitHolding [Ace, King, Five, Three]
+}
 
 -- Test suit biddng with a 4441 shape with a black suit club singleton => Heart bid
 testHandSuit_h :: Hand
-testHandSuit_h  = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, Seven),
-                   (Hearts, King), (Hearts, Jack), (Hearts, Three), (Hearts, Two),
-                   (Diamonds, Jack), (Diamonds, Six), (Diamonds, Five), (Diamonds, Three),
-                   (Clubs, Ace)]
+testHandSuit_h  = Hand {
+    spades   = SuitHolding [King, Queen, Nine, Seven],
+    hearts   = SuitHolding [King, Jack, Three, Two],
+    diamonds = SuitHolding [Jack, Six, Five, Three],
+    clubs    = SuitHolding [Ace]
+}
 
 -- Premptable bid
 testHandPrempt_a :: Hand
-testHandPrempt_a  = [(Spades, King), (Spades, Queen), (Spades, Nine), (Spades, Seven), (Spades, Six), (Spades, Five), (Spades, Four),
-                     (Hearts, King), (Hearts, Jack), (Hearts, Three),
-                     (Diamonds, Seven), (Diamonds, Six),
-                     (Clubs, Five)]
+testHandPrempt_a  = Hand {
+    spades   = SuitHolding [King, Queen, Nine, Seven, Six, Five, Four],
+    hearts   = SuitHolding [King, Jack, Three],
+    diamonds = SuitHolding [Seven, Six],
+    clubs    = SuitHolding [Five]
+}
 
 -- This hand has 19 points and >= 2 honours in the long suit
 testStrong2OpeningHand_a :: Hand
-testStrong2OpeningHand_a = [(Spades, Ace), (Spades, King), (Spades, Queen), (Spades, Ten), (Spades, Eight), (Spades, Three),
-                     (Diamonds, King), (Diamonds, Queen), (Diamonds, Jack), (Diamonds, Ten),
-                     (Clubs, Ace), (Clubs, Six), (Clubs, Three)]
+testStrong2OpeningHand_a = Hand {
+    spades   = SuitHolding [Ace, King, Queen, Ten, Eight, Three],
+    hearts   = SuitHolding [King, Queen, Jack, Ten],
+    diamonds = SuitHolding [Ace, Six, Three],
+    clubs    = SuitHolding []
+}
 
 -- This hand has 16 points but ony 1 honour in spades
 testStrong2OpeningHand_b :: Hand
-testStrong2OpeningHand_b = [(Spades, Queen), (Spades, Ten), (Spades, Nine), (Spades, Eight), (Spades, Five), (Spades, Three),
-                     (Diamonds, Ace), (Diamonds, King), (Diamonds, Queen), (Diamonds, Jack), (Diamonds, Ten),
-                     (Clubs, Ace), (Clubs, Three)]
+testStrong2OpeningHand_b = Hand {
+    spades   = SuitHolding [Queen, Ten, Nine, Eight, Five, Three],
+    hearts   = SuitHolding [Ace, King, Queen, Jack, Ten],
+    diamonds = SuitHolding [Ace, Three],
+    clubs    = SuitHolding []
+}
+-- This hand has 16 points but ony 1 honour in spades
+testFailingStrong2OpeningHand_a :: Hand
+testFailingStrong2OpeningHand_a  = Hand {
+    spades   = SuitHolding [Ace,Queen,Jack,Ten,Seven,Five,Two],
+    hearts   = SuitHolding [Ace],
+    diamonds = SuitHolding [],
+    clubs    = SuitHolding [Ace,King,Nine,Seven,Two]
+}
 
 
+{-
 -- A sample table
 testTable_a :: TableHands
 testTable_a = [
-        (North, [(Clubs, Six), (Clubs, Seven), (Clubs, Nine), (Clubs, Ace), (Diamonds, Two), (Diamonds, Three), (Diamonds, Six), (Hearts, Three), (Hearts, Ten), (Hearts, Jack), (Spades, Three), (Spades, Six), (Spades, King)]), 
-        (East,  [(Clubs, Five), (Clubs, Jack), (Diamonds, Four), (Diamonds, Seven), (Diamonds, Nine), (Diamonds, Jack), (Hearts, Five), (Hearts, Six), (Hearts, Nine), (Spades, Five), (Spades, Seven), (Spades, Nine), (Spades, Jack)]), 
-        (South, [(Clubs, Two), (Clubs, Eight), (Diamonds, Five), (Diamonds, Eight), (Diamonds, Ten), (Diamonds, King), (Diamonds, Ace), (Hearts, Four), (Hearts, Eight), (Hearts, Queen), (Spades, Two), (Spades, Ten), (Spades, Queen)]), 
-        (West,  [(Clubs, Three), (Clubs, Four), (Clubs, Ten), (Clubs, Queen), (Clubs, King), (Diamonds, Queen), (Hearts, Two), (Hearts, Seven), (Hearts, King), (Hearts, Ace), (Spades, Four), (Spades, Eight), (Spades, Ace)])
-    ]
+(North, [Six, Seven, Nine, Ace, Two, Three, Six, Three, Ten, Jack, Three, Six, King,
+(East,  [Five, Jack, Four, Seven, Nine, Jack, Five, Six, Nine, Five, Seven, Nine, Jack,
+(South, [Two, Eight, Five, Eight, Ten, King, Ace, Four, Eight, Queen, Two, Ten, Queen,
+(West,  [Three, Four, Ten, Queen, King, Queen, Two, Seven, King, Ace, Four, Eight, Ace)
+]
 
+-}

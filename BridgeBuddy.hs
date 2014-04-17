@@ -17,7 +17,7 @@ main = do
 
 printDeck :: IO ()
 printDeck = do
-    deck <- shuffleDeck
+    deck <- shuffleDeck fullDeck
     let hands = dealHands deck
     printHands hands
 
@@ -31,7 +31,7 @@ printHands hands = mapM_ (\(s, f) -> printHand s (f hands)) players
 printHand :: String -> Hand -> IO ()
 printHand position hand = do
     putStrLn position
-    putStrLn $ showHand hand
+    putStrLn $ show hand
     putStrLn $ "HCP: " ++ show (hcp hand)
     putStrLn $ "Playing Tricks: " ++ show (playingTricks hand)
     putStrLn $ "Balanced: " ++ show (isBalanced hand)
