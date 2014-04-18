@@ -39,37 +39,52 @@ library
         library
 
 executable web_server
-  main-is:             ScottyWebServer.hs   
-  other-extensions:    OverloadedStrings
-  build-depends:       base >=4.6 && <4.7
-                     , BridgeBuddyServer
-                     , mtl >=2.1 && <2.2
-                     , containers >=0.5 && <0.6
-                     , transformers >=0.3 && <0.4
-                     , bytestring >=0.10 && <0.11
-                     , scotty >= 0.6.0
-                     , hbeanstalk >= 0.2.4
-                     , aeson >= 0.6.1.0
-  hs-source-dirs:      web
-  default-language:    Haskell2010
+    main-is:             ScottyWebServer.hs   
+    other-extensions:    OverloadedStrings
+    build-depends:       base >=4.6 && <4.7
+                         , BridgeBuddyServer
+                         , mtl >=2.1 && <2.2
+                         , containers >=0.5 && <0.6
+                         , transformers >=0.3 && <0.4
+                         , bytestring >=0.10 && <0.11
+                         , scotty >= 0.6.0
+                         , hbeanstalk >= 0.2.4
+                         , aeson >= 0.6.1.0
+    hs-source-dirs:      web
+    default-language:    Haskell2010
 
 executable populate_queue
-  main-is:             populate_queue.hs   
-  build-depends:       base >=4.6 && <4.7
-                     , BridgeBuddyServer
-                     , mtl >=2.1 && <2.2
-                     , containers >=0.5 && <0.6
-                     , bytestring >=0.10 && <0.11
-                     , hbeanstalk >= 0.2.4
-                     , random-shuffle >= 0.0.4
-                     , aeson >= 0.6.1.0
-  hs-source-dirs:      populate_queue
-  default-language:    Haskell2010
+    main-is:             populate_queue.hs   
+    build-depends:       base >=4.6 && <4.7
+                         , BridgeBuddyServer
+                         , mtl >=2.1 && <2.2
+                         , containers >=0.5 && <0.6
+                         , bytestring >=0.10 && <0.11
+                         , hbeanstalk >= 0.2.4
+                         , random-shuffle >= 0.0.4
+                         , aeson >= 0.6.1.0
+    hs-source-dirs:      populate_queue
+    default-language:    Haskell2010
 
 
 executable bridge-buddy
-  main-is:             Main.hs   
-  build-depends:       base >=4.6 && <4.7
-                     , BridgeBuddyServer
-  hs-source-dirs:      bridge-buddy
-  default-language:    Haskell2010
+    main-is:             Main.hs   
+    build-depends:       base >=4.6 && <4.7
+                         , BridgeBuddyServer
+    hs-source-dirs:      bridge-buddy
+    default-language:    Haskell2010
+
+test-suite tests
+    build-depends:      base >=4.6 && <4.7
+                        , BridgeBuddyServer
+                        , HUnit
+                        , test-framework
+                        , test-framework-hunit
+    default-language:   Haskell2010
+    ghc-options:        -fhpc -Wall -Werror
+    hs-source-dirs:     test
+    main-is:            CardsTest.hs
+    other-modules:      BridgeBuddy
+    type:               exitcode-stdio-1.0
+
+
