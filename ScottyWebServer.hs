@@ -12,7 +12,7 @@ import qualified Control.Exception as E
 
 main = scotty 3000 $ do
 
-    get "/openingbid" $ do
+    get "/hand" $ do
         bs <- liftIO $ connectBeanstalk "127.0.0.1" "11300"
         liftIO $ watchTube bs (B.pack "OpeningBids")
         e <- liftIO $ E.tryJust (guard . isTimedOutException) (reserveJobWithTimeout bs 1)
