@@ -4,7 +4,6 @@
 name:                BridgeBuddyServer
 version:             0.1.0.0
 synopsis:            A JSON RPC Server for Bridge Buddy
--- description:         
 homepage:            https://github.com/derekmcloughlin/BridgeBuddyServer
 license:             Apache-2.0
 license-file:        LICENSE
@@ -16,57 +15,61 @@ build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
 
-executable BridgeBuddyServer
+library
+    build-depends:       
+        base >=4.6 && <4.7
+        , mtl >=2.1 && <2.2
+        , HUnit >=1.2 && <1.3
+        , containers >=0.5 && <0.6
+        , transformers >=0.3 && <0.4
+        , bytestring >=0.10 && <0.11
+        , random-shuffle >= 0.0.4
+        , aeson >= 0.6.1.0
+        , split >= 0.2.2
+    default-language:
+        Haskell2010
+    exposed-modules:
+        BridgeBuddy.Cards
+        BridgeBuddy.CardsJson
+        -- HASKELETON: New.Module
+    ghc-prof-options:
+        -auto-all
+        -prof
+    hs-source-dirs:
+        library
+
+executable web_server
   main-is:             ScottyWebServer.hs   
-  -- other-modules:       
   other-extensions:    OverloadedStrings
   build-depends:       base >=4.6 && <4.7
+                     , BridgeBuddyServer
                      , mtl >=2.1 && <2.2
-                     , HUnit >=1.2 && <1.3
                      , containers >=0.5 && <0.6
                      , transformers >=0.3 && <0.4
                      , bytestring >=0.10 && <0.11
                      , scotty >= 0.6.0
                      , hbeanstalk >= 0.2.4
-                     , random-shuffle >= 0.0.4
                      , aeson >= 0.6.1.0
-                     , split >= 0.2.2
-  -- hs-source-dirs:      
+  hs-source-dirs:      web
   default-language:    Haskell2010
 
-executable populate_weighted_queue
-  main-is:             populate_weighted_queue.hs   
-  -- other-modules:       
-  other-extensions:    OverloadedStrings
+executable populate_queue
+  main-is:             populate_queue.hs   
   build-depends:       base >=4.6 && <4.7
+                     , BridgeBuddyServer
                      , mtl >=2.1 && <2.2
-                     , HUnit >=1.2 && <1.3
                      , containers >=0.5 && <0.6
-                     , transformers >=0.3 && <0.4
                      , bytestring >=0.10 && <0.11
-                     , scotty >= 0.6.0
                      , hbeanstalk >= 0.2.4
                      , random-shuffle >= 0.0.4
                      , aeson >= 0.6.1.0
-                     , split >= 0.2.2
-  -- hs-source-dirs:      
+  hs-source-dirs:      populate_queue
   default-language:    Haskell2010
 
 
-executable BridgeBuddy
-  main-is:             BridgeBuddy.hs   
-  -- other-modules:       
-  other-extensions:    OverloadedStrings
+executable bridge-buddy
+  main-is:             Main.hs   
   build-depends:       base >=4.6 && <4.7
-                     , mtl >=2.1 && <2.2
-                     , HUnit >=1.2 && <1.3
-                     , containers >=0.5 && <0.6
-                     , transformers >=0.3 && <0.4
-                     , bytestring >=0.10 && <0.11
-                     , scotty >= 0.6.0
-                     , hbeanstalk >= 0.2.4
-                     , random-shuffle >= 0.0.4
-                     , aeson >= 0.6.1.0
-                     , split >= 0.2.2
-  -- hs-source-dirs:      
+                     , BridgeBuddyServer
+  hs-source-dirs:      bridge-buddy
   default-language:    Haskell2010
