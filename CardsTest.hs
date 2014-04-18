@@ -26,7 +26,7 @@ tests = TestList [
 
 testBalancedHand :: Hand
 testBalancedHand = Hand {
-    spades   = SuitHolding [Ace, King, Nine, Seven ],
+    spades   = SuitHolding [Ace, King, Nine, Seven],
     hearts   = SuitHolding [Queen, Five, Two],
     diamonds = SuitHolding [King, Nine, Five],
     clubs    = SuitHolding [Jack, Six, Three]

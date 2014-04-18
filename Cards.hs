@@ -50,7 +50,7 @@ data TableHands = TableHands {
     deriving (Show)
 
 instance Show SuitHolding where
-    show (SuitHolding cards) = show $ cards
+    show (SuitHolding cards) = show cards
 
 suitHolding :: Suit -> Hand -> SuitHolding
 suitHolding Clubs hand    = clubs hand
@@ -60,7 +60,7 @@ suitHolding Spades hand   = spades hand
 
 -- High Card Point values
 hcp :: Hand -> Int
-hcp hand = sum $ map hcpSuitHolding $ [suit hand | suit <- [clubs, diamonds, hearts, spades]]
+hcp hand = sum $ map hcpSuitHolding [suit hand | suit <- [clubs, diamonds, hearts, spades]]
 
 hcpSuitHolding :: SuitHolding -> Int
 hcpSuitHolding (SuitHolding rs) = sum $ map hcpValue rs
@@ -102,7 +102,7 @@ mkHand cards = Hand {
                 hearts   = SuitHolding $ ranks Hearts cards,
                 spades   = SuitHolding $ ranks Spades cards
             }
-            where ranks suit cs = reverse $ sort $ [r | (Card s r) <- cs, suit == s]
+            where ranks suit cs = sortBy (flip compare) [r | (Card s r) <- cs, suit == s]
 
 showCard :: Card -> String
 showCard (Card suit rank) = show suit ++ " " ++ show rank
@@ -178,7 +178,7 @@ hasGoodFiveCard :: SuitHolding -> Bool
 hasGoodFiveCard sh = cardLength sh == 5 && hcpSuitHolding sh > 0
 
 honours :: SuitHolding -> [Rank]
-honours (SuitHolding rs) = filter (\rank -> isHonour rank) rs
+honours (SuitHolding rs) = filter isHonour rs
 
 -- A good 6-card suit is one headed by two honours
 hasGoodSixCard :: SuitHolding -> Bool
@@ -292,8 +292,8 @@ hasRankInSuit hand suit rank = rank `elem` rs
 -- or good 5-4 suits
 hasStrong2Opening :: Hand -> Maybe Suit
 hasStrong2Opening hand
-                | isStrongInPoints == False = Nothing
-                | otherwise = strongSuit
+                | not isStrongInPoints = Nothing
+                | otherwise            = strongSuit
             where isStrongInPoints = not (isBalanced hand) &&
                         hcp hand `elem` [16 .. 22] &&
                         playingTricks hand >= 8
@@ -326,7 +326,7 @@ playingTricks hand = floor $ sum [playingTricksInSuit $ suitHolding suit hand | 
 -- We only count max of three cards for the calculation and
 -- then add the length if the length is > 3.
 playingTricksInSuit :: SuitHolding  -> Double
-playingTricksInSuit sh@(SuitHolding rs) = (playingTricksInHonours $ showHonours sh) + fromIntegral (lengthTricks sh)
+playingTricksInSuit sh@(SuitHolding rs) = playingTricksInHonours (showHonours sh) + fromIntegral (lengthTricks sh)
     where lengthTricks sh = if cardLength (SuitHolding rs) > 3
                             then cardLength (SuitHolding rs) - 3
                             else 0
@@ -366,7 +366,7 @@ playingTricksInHonours "A-K-Q"  = 3
 playingTricksInHonours _        = 0
 
 showHonours :: SuitHolding -> String
-showHonours (SuitHolding rs) = intercalate "-" [showHonour n | n <- take 3 $ reverse $ sort rs]
+showHonours (SuitHolding rs) = intercalate "-" [showHonour n | n <- take 3 $ sortBy (flip compare) rs]
 
 -- Make an opening bid
 openingBid :: Hand -> (Bid, [String])
