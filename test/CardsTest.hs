@@ -1,10 +1,19 @@
-module CardsTest where
+module Main where
 
 import Test.HUnit
-import Cards
+import BridgeBuddy.Cards
 
-tests :: Test
-tests = TestList [
+import Test.Framework (defaultMain, testGroup)
+import Test.Framework.Providers.HUnit
+
+import Test.HUnit
+
+main :: IO ()
+main = defaultMain $ hUnitTestToTests hunit_tests
+
+
+hunit_tests :: Test.HUnit.Test
+hunit_tests  = Test.HUnit.TestList [
       TestCase (assertEqual "test5CardMajorSpades" (Trump Spades 1)   (fst (openingBid testHand5CardMajor)))
     , TestCase (assertEqual "testRule20_a"         (Trump Spades 1)   (fst (openingBid testHandRule20_a)))
     , TestCase (assertEqual "testRule20_b"         (Trump Spades 1)   (fst (openingBid testHandRule20_b)))

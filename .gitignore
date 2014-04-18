@@ -12,3 +12,4 @@ cabal-dev
 .vagrant
 Vagrantfile
 cabal.sandbox.config
+.hpc
