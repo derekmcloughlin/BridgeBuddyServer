@@ -9,9 +9,6 @@ cabal-dev
 .hsenv*
 .*.un~
 .cabal-sandbox
-BridgeBuddy
-populate_weighted_queue
-ScottyWebServer
 .vagrant
 Vagrantfile
 cabal.sandbox.config
