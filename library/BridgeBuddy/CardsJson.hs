@@ -1,8 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module CardsJson where
+module BridgeBuddy.CardsJson where
 
-import Cards
+import BridgeBuddy.Cards
 
 import Data.Aeson (Value(String), toJSON, ToJSON, Object, object)
 

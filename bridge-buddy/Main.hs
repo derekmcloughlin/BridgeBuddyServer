@@ -1,8 +1,7 @@
 import System.Environment (getArgs)
 import Control.Monad
-import Control.Monad.Writer
-import Cards
-import Data.List
+
+import BridgeBuddy.Cards
 
 main :: IO ()
 main = do

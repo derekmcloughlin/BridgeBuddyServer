@@ -1,18 +1,16 @@
 import System.Environment (getArgs)
 import Control.Monad
-import Control.Monad.Writer
-import Cards
-import CardsJson
 import Data.List
 import Network.Beanstalk
 import Data.Aeson
 import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Lazy.Char8 as BSL
-
 import qualified Data.Map as Map
-import Control.Applicative
-import FiniteWeightedList
 import System.Random.Shuffle
+
+import BridgeBuddy.Cards
+import BridgeBuddy.CardsJson
+import FiniteWeightedList
 
 handList :: FiniteWeightedList String Hand
 handList = FiniteWeightedList {
