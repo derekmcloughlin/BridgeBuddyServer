@@ -292,16 +292,17 @@ hasStrong2Opening hand
                         hcp hand `elem` [16 .. 22] &&
                         playingTricks hand >= 8
                   strongSuit
-                      | hasGoodSixCard (spades hand)  = Just Spades
-                      | hasGoodSixCard (hearts hand)  = Just Hearts
-                      | hasGoodSixCard (diamonds hand) = Just Diamonds
-                      | otherwise = Nothing
+                      | hasGoodSixCard (spades hand)    = Just Spades
+                      | hasGoodSixCard (hearts hand)    = Just Hearts
+                      | hasGoodSixCard (diamonds hand)  = Just Diamonds
+                      | otherwise                       = Nothing
 
 
 -- If you have 10 or 11 HCP and the length of your two
 -- longest suits plus your HCP >= 20 then make a bid
 ruleOfTwenty :: Hand -> Bool
-ruleOfTwenty hand = hcp hand `elem` [10, 11] && (hcp hand + sum [snd q | q <- twoLongestSuits]) >= 20
+ruleOfTwenty hand = hcp hand `elem` [10, 11] && 
+                    (hcp hand + sum [snd q | q <- twoLongestSuits]) >= 20
     where twoLongestSuits = take 2 $ sortBy (flip compareByLength) $ suitLengths hand
 
 -- Calculate the number of playing tricks in the hand.
@@ -320,7 +321,8 @@ playingTricks hand = floor $ sum [playingTricksInSuit $ suitHolding suit hand | 
 -- We only count max of three cards for the calculation and
 -- then add the length if the length is > 3.
 playingTricksInSuit :: SuitHolding  -> Double
-playingTricksInSuit sh@(SuitHolding rs) = playingTricksInHonours (showHonours sh) + fromIntegral (lengthTricks sh)
+playingTricksInSuit sh@(SuitHolding rs) = playingTricksInHonours (showHonours sh) + 
+                                            fromIntegral (lengthTricks sh)
     where lengthTricks sh = if cardLength (SuitHolding rs) > 3
                             then cardLength (SuitHolding rs) - 3
                             else 0
