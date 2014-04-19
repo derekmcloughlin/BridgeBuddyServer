@@ -17,11 +17,21 @@ main = do
 printDeck :: IO ()
 printDeck = do
     deck <- shuffleDeck fullDeck
-    let hands = dealHands deck
-    printHands hands
+    let table = dealHands deck
+    case keepFindingBiddableHand table of
+        Just tbl -> do
+            case getOpeningResponse tbl of
+                Just _ -> do
+                    printTable "HAS OPENING RESPONSE" tbl
+                Nothing -> 
+                    printTable "NO OPENING RESPONSE" tbl
+        Nothing  -> do 
+            printTable "TABLE PASSED OUT" table
 
-printHands :: TableHands -> IO ()
-printHands hands = mapM_ (\(s, f) -> printHand s (f hands)) players
+printTable :: String -> TableHands -> IO ()
+printTable header hands = do
+    putStrLn $ "-------" ++ header
+    mapM_ (\(s, f) -> printHand s (f hands)) players
     where players = [ ("North", north),
                       ("East", east),
                       ("South", south),
@@ -30,7 +40,7 @@ printHands hands = mapM_ (\(s, f) -> printHand s (f hands)) players
 printHand :: String -> Hand -> IO ()
 printHand position hand = do
     putStrLn position
-    putStrLn $ show hand
+    putStr   $ show hand
     putStrLn $ "HCP: " ++ show (hcp hand)
     putStrLn $ "Playing Tricks: " ++ show (playingTricks hand)
     putStrLn $ "Balanced: " ++ show (isBalanced hand)

@@ -33,7 +33,7 @@ instance Show Hand where
     show hand = show Spades ++ "  " ++ show (spades hand) ++ "\n" ++
                 show Hearts ++ "  " ++ show (hearts hand) ++ "\n" ++
                 show Diamonds ++ "  " ++ show (diamonds hand) ++ "\n" ++
-                show Clubs ++ "  " ++ show (clubs hand)
+                show Clubs ++ "  " ++ show (clubs hand) ++ "\n" 
 
 newtype Deck = Deck [Card]
                deriving (Show)
@@ -398,7 +398,7 @@ rankValues suit hand = unwords [show rank | rank <- rs]
                     where (SuitHolding rs) = suitHolding suit hand
 
 -- Rotate the table anti-clockwise so that 'East' becomes 'North etc.
--- TODO: use this ensure that North always has a biddable hand
+-- Used to ensure that the first biddable hand is North 
 rotate :: TableHands -> TableHands
 rotate th = TableHands {
         north = east th,
@@ -406,3 +406,33 @@ rotate th = TableHands {
         south = west th,
         west  = north th
     }
+
+-- Go through the hands from North, East, South, West to find the
+-- first biddable one, then make that North.
+-- This allows us to look for responses where East is weak
+-- and South can possibly respond.
+keepFindingBiddableHand :: TableHands -> Maybe TableHands
+keepFindingBiddableHand table = innerFind 0 table
+    where 
+        innerFind num_rotations tbl
+            | num_rotations == 4 = Nothing  -- Passed out
+            | otherwise = do
+                let (northsBid, _) = openingBid $ north tbl
+                case northsBid of
+                    Pass    -> innerFind (num_rotations + 1) $ rotate tbl
+                    _       -> Just tbl
+
+
+-- Find a table where North has an opening bid, East is
+-- weak (defined here as <= 6 hcp) and where South has >= 6 hcp
+getOpeningResponse :: TableHands -> Maybe TableHands
+getOpeningResponse table = 
+    case keepFindingBiddableHand table of
+        Nothing -> Nothing
+        Just tbl -> do
+            case hcp (east tbl) <= 6 && hcp (south table) >= 6 of
+                True  -> Just tbl
+                False -> Nothing
+
+        
+
