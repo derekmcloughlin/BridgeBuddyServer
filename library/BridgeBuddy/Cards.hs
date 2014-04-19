@@ -41,6 +41,9 @@ newtype Deck = Deck [Card]
 
 newtype SuitHolding = SuitHolding [Rank]
 
+instance Show SuitHolding where
+    show (SuitHolding cards) = show cards
+
 data TableHands = TableHands {
         north :: Hand,
         east  :: Hand,
@@ -48,9 +51,6 @@ data TableHands = TableHands {
         west  :: Hand
     }
     deriving (Show)
-
-instance Show SuitHolding where
-    show (SuitHolding cards) = show cards
 
 suitHolding :: Suit -> Hand -> SuitHolding
 suitHolding Clubs hand    = clubs hand
@@ -104,9 +104,6 @@ mkHand cards = Hand {
             }
             where ranks suit cs = sortBy (flip compare) [r | (Card s r) <- cs, suit == s]
 
-showCard :: Card -> String
-showCard (Card suit rank) = show suit ++ " " ++ show rank
-
 -- Display single-letter codes for suits
 instance Show Suit where
    show Clubs    = "C"
@@ -153,10 +150,7 @@ suitLengths hand = [(suit, suitLength suit hand) | suit <- [Clubs .. Spades]]
 
 -- Get the length of a suit in a hand
 suitLength :: Suit -> Hand -> Int
-suitLength Clubs hand = cardLength$ clubs hand
-suitLength Diamonds hand = cardLength $ diamonds hand
-suitLength Hearts hand = cardLength $ hearts hand
-suitLength Spades hand = cardLength $ spades hand
+suitLength suit hand = cardLength $ suitHolding suit hand
 
 -- A balanced hand has no voids, no singleton and at most one doubleton
 -- The shape of the hand can only be one of 5332, 4333 or 4432.
@@ -403,6 +397,7 @@ rankValues suit hand = unwords [show rank | rank <- rs]
                     where (SuitHolding rs) = suitHolding suit hand
 
 -- Rotate the table anti-clockwise so that 'East' becomes 'North etc.
+-- TODO: use this ensure that North always has a biddable hand
 rotate :: TableHands -> TableHands
 rotate th = TableHands {
         north = east th,
