@@ -68,6 +68,6 @@ addItem fwl key item
 -- Add a list of items to the data structure.
 -- A function 'f' that gives us the group string is provided.
 addList :: (Ord c) => FiniteWeightedList c a -> [a] -> (a -> c) -> FiniteWeightedList c a
-addList fwl xs f = foldl (\ fwl x -> addItem fwl (f x) x) fwl xs
+addList fwl xs f = foldl (\ tmp_fwl x -> addItem tmp_fwl (f x) x) fwl xs
 
 

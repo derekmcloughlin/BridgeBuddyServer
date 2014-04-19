@@ -6,7 +6,6 @@ import System.Random.Shuffle
 import Control.Monad.Writer
 import Data.List
 import Data.List.Split
-import Data.Ratio
 
 data Suit = Clubs | Diamonds | Hearts | Spades
             deriving (Eq, Ord, Enum)
@@ -322,10 +321,10 @@ playingTricks hand = floor $ sum [playingTricksInSuit $ suitHolding suit hand | 
 -- then add the length if the length is > 3.
 playingTricksInSuit :: SuitHolding  -> Double
 playingTricksInSuit sh@(SuitHolding rs) = playingTricksInHonours (showHonours sh) + 
-                                            fromIntegral (lengthTricks sh)
-    where lengthTricks sh = if cardLength (SuitHolding rs) > 3
-                            then cardLength (SuitHolding rs) - 3
-                            else 0
+                                            fromIntegral lengthTricks
+    where lengthTricks = if cardLength (SuitHolding rs) > 3
+                         then cardLength (SuitHolding rs) - 3
+                         else 0
 
 playingTricksInHonours :: String -> Double
 playingTricksInHonours "K"      = 0.5

@@ -1,6 +1,5 @@
 import System.Environment (getArgs)
 import Control.Monad
-import Data.List
 import Network.Beanstalk
 import Data.Aeson
 import qualified Data.ByteString.Char8 as B
@@ -60,8 +59,8 @@ main = do
 
     forM_ finalList $ \hand -> do
         let json_string = BSL.unpack $ encode $ mkJson hand
-        (_, id) <- putJob bs 1 0 10 (B.pack json_string)
-        putStrLn $ "Added Job #" ++ show id ++ ": " ++ json_string
+        (_, jobId) <- putJob bs 1 0 10 (B.pack json_string)
+        putStrLn $ "Added Job #" ++ show jobId ++ ": " ++ json_string
 
 
 

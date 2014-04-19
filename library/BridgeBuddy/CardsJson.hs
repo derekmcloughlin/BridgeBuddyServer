@@ -4,7 +4,7 @@ module BridgeBuddy.CardsJson where
 
 import BridgeBuddy.Cards
 
-import Data.Aeson (Value(String), toJSON, ToJSON, Object, object)
+import Data.Aeson (Value(String), toJSON, ToJSON, object)
 
 -- JSON Exports
 

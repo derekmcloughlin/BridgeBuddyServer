@@ -10,11 +10,12 @@ import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Control.Exception as E
 
+main :: IO ()
 main = scotty 3000 $ do
 
     get "/hand" $ do
         bs <- liftIO $ connectBeanstalk "127.0.0.1" "11300"
-        liftIO $ watchTube bs (B.pack "OpeningBids")
+        _ <- liftIO $ watchTube bs (B.pack "OpeningBids")
         e <- liftIO $ E.tryJust (guard . isTimedOutException) (reserveJobWithTimeout bs 1)
 
         j <- case e of
