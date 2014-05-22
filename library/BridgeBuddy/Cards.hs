@@ -253,8 +253,7 @@ openingBidWithLog hand
     | hcp hand >= 23 = do
         tell ["More than 23 points - artificial 2C bid."]
         return (Trump Clubs 2)
-    | fst (isPremptable hand) = do
-        let (_, longestSuit) = isPremptable hand
+    | (True, longestSuit) <- isPremptable hand = do
         tell ["Weak hand with 7-card suit headed by 2 honours."]
         tell ["Opening with a pre-emptive bid at the 3 level."]
         return (Trump longestSuit 3)
