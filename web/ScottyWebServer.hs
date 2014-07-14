@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-import Web.Scotty
 
 import qualified Data.Aeson as Aeson
 import Network.Beanstalk
@@ -10,8 +9,23 @@ import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Control.Exception as E
 
+import Web.Scotty.Trans as S
+import Web.Scotty.Hastache
+
+import Network.Wai.Middleware.Static
+
+import Network.Wai.Middleware.RequestLogger
+
 main :: IO ()
-main = scotty 3000 $ do
+main = scottyH' 3000 $ do
+
+    middleware logStdoutDev
+
+    -- Static files
+    middleware $ staticPolicy (noDots >-> addBase "static")
+
+    -- Hastache templates
+    setTemplatesDir "templates"
 
     get "/hand" $ do
         bs <- liftIO $ connectBeanstalk "127.0.0.1" "11300"
@@ -34,4 +48,6 @@ main = scotty 3000 $ do
         json j 
 
     get "/test" $ html "OK"
+
+    get "/" $ hastache "main.html"
 

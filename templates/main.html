@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="/stylesheets/styles.css">
+    </head>
+    <body>
+        <h1>Welcome to BridgeBuddy</h1>
+        <h2>What's your opening bid?</h2>
+
+        <table>
+            <tr>
+                <td><div class='card-label' id='card-spades'></div></td>
+                <td><span class='cards' id='spades'></span></td>
+            </tr>
+            <tr>
+                <td><div class='card-label' id='card-hearts'></div></td>
+                <td><span class='cards' id='hearts'></span></td>
+            </tr>
+            <tr>
+                <td><div class='card-label' id='card-diamonds'></div></td>
+                <td><span class='cards' id='diamonds'></span></td>
+            </tr>
+            <tr>
+                <td><div class='card-label' id='card-clubs'></div></td>
+                <td><span class='cards' id='clubs'></span></td>
+            </tr>
+           </table>
+
+        <table>
+            <tr>
+                <td><span class="button blue" data-bid="1C">1C</span></td>
+                <td><span class="button blue" data-bid="1D">1D</span></td>
+                <td><span class="button blue" data-bid="1H">1H</span></td>
+                <td><span class="button blue" data-bid="1S">1S</span></td>
+                <td><span class="button blue" data-bid="1NT">1NT</span></td>
+            </tr>
+            <tr>
+                <td><span class="button blue" data-bid="2C">2C</span></td>
+                <td><span class="button blue" data-bid="2D">2D</span></td>
+                <td><span class="button blue" data-bid="2H">2H</span></td>
+                <td><span class="button blue" data-bid="2S">2S</span></td>
+                <td><span class="button blue" data-bid="2NT">2NT</span></td>
+            </tr>
+            <tr>
+                <td><span class="button blue" data-bid="3C">3C</span></td>
+                <td><span class="button blue" data-bid="3D">3D</span></td>
+                <td><span class="button blue" data-bid="3H">3H</span></td>
+                <td><span class="button blue" data-bid="3S">3S</span></td>
+                <td><span class="button blue" data-bid="3NT">3NT</span></td>
+            </tr>
+        </table>
+
+        <ul id="bidding">
+            <li id="bid" class="bidbutton green">Bid</li>
+            <li id="pass" class="bidbutton green">Pass</li>
+        </ul>
+ 
+        <script type="text/javascript">
+
+            var actualBid = "";
+            var currentBid = "";
+            var json_response = null;
+
+            $().ready(function(){
+                getHand();
+                $(".gethand").click(function() {
+                    var button = this;
+                    getHand();
+               });
+               $("#bid").click(function() {
+                    if (currentBid == "" ){
+                        alert("Please make a bid.");
+                        return;
+                    }
+                    checkBid();
+              });
+              $("#pass").click(function() {
+                    currentBid = "Pass";
+                    checkBid();
+               });
+ 
+               $('.button').click(function() {  
+                    $('.button').not(this).removeClass('buttonactive');
+                    $(this).toggleClass('buttonactive');
+                    if ( $(this).hasClass('buttonactive') ) {
+                        currentBid = $(this).data('bid');
+                    } else {
+                        currentBid = "";
+                    }
+                });
+             });
+
+            function clear() {
+                actualBid = "";
+                currentBid = "";
+                json_response = null;
+                $('.button').removeClass('buttonactive');
+            }
+
+            function getHand() {
+                $.ajax({
+                    url:  '/hand',
+                    type: 'GET', 
+                    dataType: 'json',
+                    success: function(result) {
+                        json_response = result;
+                        $("#spades").text(result.spades);
+                        $("#hearts").text(result.hearts);
+                        $("#diamonds").text(result.diamonds);
+                        $("#clubs").text(result.clubs);
+                        actualBid = result.bid;
+                    }
+                });
+
+           }
+
+            function checkBid() {
+                var answer = "";
+                if (actualBid == currentBid) {
+                    answer = "You've bid correctly!.\n";
+                } else {
+                    answer = "The correct bid is: " + json_response.bid + "\n";
+                }
+                answer += json_response.reasons.join("\n");
+                alert(answer);
+                clear();
+                getHand();
+             
+            }
+
+        </script> 
+
+    </body>
+</html>
+
