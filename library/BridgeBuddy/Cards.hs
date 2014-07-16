@@ -176,7 +176,7 @@ hasGoodFiveCardMajor hand = hasGoodFiveCard (spades hand) || hasGoodFiveCard (he
 
 -- A good 5-card suit is one headed by an honour (=> at least a Jack => hcp > 0)
 hasGoodFiveCard :: SuitHolding -> Bool
-hasGoodFiveCard sh = cardLength sh == 5 && hcpSuitHolding sh > 0
+hasGoodFiveCard sh = cardLength sh == 5 && length (honours sh) >= 1
 
 honours :: SuitHolding -> [Rank]
 honours (SuitHolding rs) = filter isHonour rs
@@ -418,6 +418,7 @@ rotate th = TableHands {
 keepFindingBiddableHand :: TableHands -> Maybe TableHands
 keepFindingBiddableHand table = innerFind 0 table
     where 
+        innerFind :: Int -> TableHands -> Maybe TableHands
         innerFind num_rotations tbl
             | num_rotations == 4 = Nothing  -- Passed out
             | otherwise = do

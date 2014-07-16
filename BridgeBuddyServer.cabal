@@ -33,7 +33,7 @@ library
         BridgeBuddy.CardsJson
         -- HASKELETON: New.Module
     ghc-options:        
-        -Wall
+        -Wall -fno-warn-orphans
     ghc-prof-options:
         -auto-all
         -prof
@@ -56,7 +56,7 @@ executable web_server
                          , scotty-hastache >= 0.2.1
                          , hbeanstalk >= 0.2.4
                          , aeson >= 0.6.1.0
-    ghc-options:         -Wall
+    ghc-options:         -Wall -fno-warn-orphans 
     hs-source-dirs:      web
     default-language:    Haskell2010
 
@@ -70,7 +70,7 @@ executable populate_queue
                          , hbeanstalk >= 0.2.4
                          , random-shuffle >= 0.0.4
                          , aeson >= 0.6.1.0
-    ghc-options:         -Wall
+    ghc-options:         -Wall -fno-warn-orphans 
     hs-source-dirs:      populate_queue
     default-language:    Haskell2010
 
@@ -79,7 +79,7 @@ executable bridge-buddy
     main-is:             Main.hs   
     build-depends:       base >=4.6 && <4.7
                          , BridgeBuddyServer
-    ghc-options:         -Wall
+    ghc-options:         -Wall -fno-warn-orphans 
     hs-source-dirs:      bridge-buddy
     default-language:    Haskell2010
 
@@ -97,7 +97,7 @@ test-suite tests
                         , test-framework
                         , test-framework-hunit
     default-language:   Haskell2010
-    ghc-options:        -fhpc 
+    ghc-options:        -fhpc -fno-warn-orphans 
     hs-source-dirs:     test
                         , library
     main-is:            CardsTest.hs
