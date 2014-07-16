@@ -175,16 +175,19 @@ compareByLength (_, n1) (_, n2) = compare n1 n2 -- ignore the suits and just loo
 hasGoodFiveCardMajor :: Hand -> Bool
 hasGoodFiveCardMajor hand = hasGoodFiveCard (spades hand) || hasGoodFiveCard (hearts hand)
 
--- A good 5-card suit is one headed by an honour (=> at least a Jack => hcp > 0)
+-- A good 5-card suit is one headed by an honour
 hasGoodFiveCard :: SuitHolding -> Bool
-hasGoodFiveCard sh = cardLength sh == 5 && length (honours sh) >= 1
+hasGoodFiveCard sh = cardLength sh == 5 && numHonours sh >= 1
 
 honours :: SuitHolding -> [Rank]
 honours (SuitHolding rs) = filter isHonour rs
 
+numHonours:: SuitHolding -> Int
+numHonours sh = length (honours sh)
+
 -- A good 6-card suit is one headed by two honours
 hasGoodSixCard :: SuitHolding -> Bool
-hasGoodSixCard suit_holding = cardLength suit_holding >= 6 && length (honours suit_holding) >= 2
+hasGoodSixCard suit_holding = cardLength suit_holding >= 6 && numHonours suit_holding >= 2
 
 isWeak1NTHand :: Hand -> Bool
 isWeak1NTHand hand = isBalanced hand && hcp hand `between` (12, 14)
