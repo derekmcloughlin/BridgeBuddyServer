@@ -26,6 +26,13 @@ instance ToJSON Player where
 instance ToJSON Bid where
 	toJSON          = toJSON . show
 
+-- Create a string for use in JSON output
+-- that shows the ranks of a suit in the form "A K Q 10 5"
+rankValues :: Suit -> Hand -> String
+rankValues suit hand = unwords [show rank | rank <- rs]
+                    where (SuitHolding rs) = suitHolding suit hand
+
+
 mkJson :: Hand -> Value
 mkJson hand = object [
                 ("spades", toJSON $ rankValues Spades hand),

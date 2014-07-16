@@ -399,12 +399,6 @@ getBiddableHand = do
     hands <- getBiddableHands
     return (head hands)
 
--- Create a string for use in JSON output
--- that shows the ranks of a suit in the form "A K Q 10 5"
-rankValues :: Suit -> Hand -> String
-rankValues suit hand = unwords [show rank | rank <- rs]
-                    where (SuitHolding rs) = suitHolding suit hand
-
 -- Rotate the table anti-clockwise so that 'East' becomes 'North etc.
 -- Used to ensure that the first biddable hand is North 
 rotate :: TableHands -> TableHands
