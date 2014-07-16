@@ -6,6 +6,7 @@ import System.Random.Shuffle
 import Control.Monad.Writer
 import Data.List
 import Data.List.Split
+import BridgeBuddy.Utils
 
 data Suit = Clubs | Diamonds | Hearts | Spades
             deriving (Eq, Ord, Enum)
@@ -186,7 +187,7 @@ hasGoodSixCard :: SuitHolding -> Bool
 hasGoodSixCard suit_holding = cardLength suit_holding >= 6 && length (honours suit_holding) >= 2
 
 isWeak1NTHand :: Hand -> Bool
-isWeak1NTHand hand = isBalanced hand && hcp hand `elem` [12 .. 14]
+isWeak1NTHand hand = isBalanced hand && hcp hand `between` (12, 14)
 
 -- Sort a hand by the length of suits. If there are 2 or 3 equal-length suits, sort by Suit descending
 longestSuits :: Hand -> [(Suit, Int)]
@@ -240,10 +241,10 @@ openingBidWithLog hand
     | isWeak1NTHand hand = do
         tell ["Balanced hand 12-14 points."]
         return (NT 1)
-    | isBalanced hand && hcp hand `elem` [20 .. 22] = do
+    | isBalanced hand && hcp hand `between` (20, 22) = do
         tell ["Balanced hand 20-22 points."]
         return (NT 2)
-    | isBalanced hand && hcp hand `elem` [15 .. 19] = do
+    | isBalanced hand && hcp hand `between` (15, 19) = do
         tell ["Balanced hand but too many points for 1NT so bid a suit."]
         bidSuit hand
     | (Just suit) <- hasStrong2Opening hand = do
@@ -252,7 +253,7 @@ openingBidWithLog hand
         tell ["Good 6+ card suit or two good 5-4 suits"]
         tell ["Strong two opening"]
         return (Trump suit 2)
-    | not (isBalanced hand) && hcp hand `elem` [12 .. 19] = do
+    | not (isBalanced hand) && hcp hand `between` (12, 19) = do
         tell ["Unbalanced hand so bid a suit."]
         bidSuit hand
     | ruleOfTwenty hand = do
@@ -295,7 +296,7 @@ hasStrong2Opening hand
                 | not isStrongInPoints = Nothing
                 | otherwise            = strongSuit
             where isStrongInPoints = not (isBalanced hand) &&
-                        hcp hand `elem` [16 .. 22] &&
+                        hcp hand `between` (16, 22) &&
                         playingTricks hand >= 8
                   strongSuit
                       | hasGoodSixCard (spades hand)    = Just Spades
@@ -307,7 +308,7 @@ hasStrong2Opening hand
 -- If you have 10 or 11 HCP and the length of your two
 -- longest suits plus your HCP >= 20 then make a bid
 ruleOfTwenty :: Hand -> Bool
-ruleOfTwenty hand = hcp hand `elem` [10, 11] && 
+ruleOfTwenty hand = hcp hand `between` (10, 11) && 
                     (hcp hand + sum [snd q | q <- twoLongestSuits]) >= 20
     where twoLongestSuits = take 2 $ sortBy (flip compareByLength) $ suitLengths hand
 
