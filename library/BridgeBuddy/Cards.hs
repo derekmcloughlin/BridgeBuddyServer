@@ -438,4 +438,49 @@ getOpeningResponse table =
                         Nothing
 
         
+-- Get the response to an opening bid.
+-- bid = North's opening bid. 
+-- hand = South's hand
+-- Return value is South's response
+openingResponse :: Bid -> Hand -> (Bid, [String])
+openingResponse bid hand = runWriter $ openingResponseWithLog bid hand
+
+openingResponseWithLog :: Bid -> Hand -> Writer [String] Bid
+openingResponseWithLog (NT 1) hand 
+    -- Balanced responses
+    | isBalanced hand && not (hasGoodFiveCardMajor hand) && hcp hand <= 10 = do
+        tell ["Balanced hand but too weak to respond."]
+        return Pass
+    | isBalanced hand && hcp hand `elem` [11, 12] = do
+        tell ["Balanced hand with 11 or 12 hcp"]
+        tell ["Respond NT 2 - invitation to game"]
+        return (NT 2)
+    | isBalanced hand && hcp hand `elem` [13..18] = do
+        tell ["Balanced hand and hcp between 13 and 18 - go to game"]
+        return (NT 3)
+    | isBalanced hand && hcp hand `elem` [19..20] = do
+        tell ["Balanced hand and 19 or 20 points"]
+        tell ["Respond NT 4 - invitation to 6NT"]
+        return (NT 4)
+    -- Unbalanced responses
+    | hcp hand <= 10 = do
+        tell ["Unbalanced hand with <= 10 HCP"]
+        respondLongestSuit $ longestSuits hand
+    | otherwise = do
+        tell ["Unknown config for 1NT"]
+        return Pass
+
+openingResponseWithLog _ _ = do
+    tell ["Only doing 1NT responses"]
+    return Pass
+
+respondLongestSuit :: [(Suit, Int)] -> Writer [String] Bid
+respondLongestSuit [(suit, _)] = do
+    tell ["Weak take out."]
+    tell ["One long suit - bid it."]
+    return (Trump suit 2)   -- Weak take out
+
+respondLongestSuit  _ = do
+    tell ["Unknown configuration for longest suit response - pass."]
+    return Pass
 

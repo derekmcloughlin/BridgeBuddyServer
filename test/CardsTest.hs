@@ -14,23 +14,24 @@ main = defaultMain $ hUnitTestToTests hunit_tests
 
 hunit_tests :: Test.HUnit.Test
 hunit_tests  = Test.HUnit.TestList [
-      TestCase (assertEqual "test5CardMajorSpades" (Trump Spades 1)   (fst (openingBid testHand5CardMajor)))
-    , TestCase (assertEqual "testRule20_a"         (Trump Spades 1)   (fst (openingBid testHandRule20_a)))
-    , TestCase (assertEqual "testRule20_b"         (Trump Spades 1)   (fst (openingBid testHandRule20_b)))
-    , TestCase (assertEqual "testRule20_c"         (Trump Spades 1)   (fst (openingBid testHandRule20_c)))
-    , TestCase (assertEqual "testRule20_d"         (Pass)            (fst (openingBid testHandRule20_d)))
-    , TestCase (assertEqual "testSuit_a"           (Trump Hearts 1)   (fst (openingBid testHandSuit_a)))
-    , TestCase (assertEqual "testSuit_b"           (Trump Hearts 1)   (fst (openingBid testHandSuit_b)))
-    , TestCase (assertEqual "testSuit_c"           (Trump Hearts 1)   (fst (openingBid testHandSuit_c)))
-    , TestCase (assertEqual "testSuit_d"           (Trump Diamonds 1) (fst (openingBid testHandSuit_d)))
-    , TestCase (assertEqual "testSuit_e"           (Trump Diamonds 1) (fst (openingBid testHandSuit_e)))
-    , TestCase (assertEqual "testSuit_f"           (Trump Clubs 1)    (fst (openingBid testHandSuit_f)))
-    , TestCase (assertEqual "testSuit_g"           (Trump Diamonds 1) (fst (openingBid testHandSuit_g)))
-    , TestCase (assertEqual "testSuit_h"           (Trump Hearts 1)   (fst (openingBid testHandSuit_h)))
-    , TestCase (assertBool  "isPremptable_a"       (fst (isPremptable testHandPrempt_a)))
-    , TestCase (assertEqual "playingTricks_a"      6 (playingTricks testHandRule20_a))
-    , TestCase (assertEqual "strongOpening_a"      (Just Spades) (hasStrong2Opening testStrong2OpeningHand_a))
-    , TestCase (assertEqual "strongOpening_b"      Nothing (hasStrong2Opening testStrong2OpeningHand_b))
+      TestCase (assertEqual "test5CardMajorSpades"      (Trump Spades 1)   (fst (openingBid testHand5CardMajor)))
+    , TestCase (assertEqual "testRule20_a"              (Trump Spades 1)   (fst (openingBid testHandRule20_a)))
+    , TestCase (assertEqual "testRule20_b"              (Trump Spades 1)   (fst (openingBid testHandRule20_b)))
+    , TestCase (assertEqual "testRule20_c"              (Trump Spades 1)   (fst (openingBid testHandRule20_c)))
+    , TestCase (assertEqual "testRule20_d"              (Pass)             (fst (openingBid testHandRule20_d)))
+    , TestCase (assertEqual "testSuit_a"                (Trump Hearts 1)   (fst (openingBid testHandSuit_a)))
+    , TestCase (assertEqual "testSuit_b"                (Trump Hearts 1)   (fst (openingBid testHandSuit_b)))
+    , TestCase (assertEqual "testSuit_c"                (Trump Hearts 1)   (fst (openingBid testHandSuit_c)))
+    , TestCase (assertEqual "testSuit_d"                (Trump Diamonds 1) (fst (openingBid testHandSuit_d)))
+    , TestCase (assertEqual "testSuit_e"                (Trump Diamonds 1) (fst (openingBid testHandSuit_e)))
+    , TestCase (assertEqual "testSuit_f"                (Trump Clubs 1)    (fst (openingBid testHandSuit_f)))
+    , TestCase (assertEqual "testSuit_g"                (Trump Diamonds 1) (fst (openingBid testHandSuit_g)))
+    , TestCase (assertEqual "testSuit_h"                (Trump Hearts 1)   (fst (openingBid testHandSuit_h)))
+    , TestCase (assertBool  "isPremptable_a"            (fst (isPremptable testHandPrempt_a)))
+    , TestCase (assertEqual "playingTricks_a"           6 (playingTricks testHandRule20_a))
+    , TestCase (assertEqual "strongOpening_a"           (Just Spades) (hasStrong2Opening testStrong2OpeningHand_a))
+    , TestCase (assertEqual "strongOpening_b"           Nothing (hasStrong2Opening testStrong2OpeningHand_b))
+    , TestCase (assertEqual "openingResponseTo1NT_a"    (NT 2) (fst (openingResponse (NT 1) testOpeningResponseTo1NT_a)))
     ]
 
 testBalancedHand :: Hand
@@ -204,6 +205,23 @@ testFailingStrong2OpeningHand_a  = Hand {
     clubs    = SuitHolding [Ace,King,Nine,Seven,Two]
 }
 
+-- Balanced hand, 11 Points, => 2NT 
+testOpeningResponseTo1NT_a :: Hand
+testOpeningResponseTo1NT_a  = Hand {
+    spades   = SuitHolding [King,Ten,Seven,Six,Four],
+    hearts   = SuitHolding [Ace,Eight,Four],
+    diamonds = SuitHolding [Jack,Ten],
+    clubs    = SuitHolding [King,Nine,Seven]
+}
+
+-- Balanced hand, 10 Points, => Pass
+testOpeningResponseTo1NT_b :: Hand
+testOpeningResponseTo1NT_b  = Hand {
+    spades   = SuitHolding [King,Ten,Seven,Six,Four],
+    hearts   = SuitHolding [King,Eight,Four],
+    diamonds = SuitHolding [Jack,Ten],
+    clubs    = SuitHolding [King,Nine,Seven]
+}
 
 {-
 -- A sample table
