@@ -10,17 +10,56 @@ import Data.List.Split
 data Suit = Clubs | Diamonds | Hearts | Spades
             deriving (Eq, Ord, Enum)
 
+-- Display single-letter codes for suits
+instance Show Suit where
+   show Clubs    = "C"
+   show Diamonds = "D"
+   show Hearts   = "H"
+   show Spades   = "S"
+
+
 data Rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace
             deriving (Eq, Ord, Enum)
+
+instance Show Rank where
+    show Ace   = "A"
+    show King  = "K"
+    show Queen = "Q"
+    show Jack  = "J"
+    show Ten   = "10"
+    show Nine  = "9"
+    show Eight = "8"
+    show Seven = "7"
+    show Six   = "6"
+    show Five  = "5"
+    show Four  = "4"
+    show Three = "3"
+    show Two   = "2"
+
 
 data Player = North | East | South | West
               deriving (Show, Eq, Ord, Enum)
 
+
 data Bid = Trump Suit Int | NT Int | Pass | Dbl | ReDbl
            deriving (Eq, Ord)
 
+instance Show Bid where
+    show Pass           = "Pass"
+    show (Trump suit n) = show n ++ show suit
+    show (NT n)         = show n ++ "NT"
+    show (Dbl)          = "Dbl"
+    show (ReDbl)        = "ReDbl"
+
+
 data Card = Card Suit Rank
             deriving (Show, Eq, Ord)
+
+newtype SuitHolding = SuitHolding [Rank]
+
+instance Show SuitHolding where
+    show (SuitHolding cards) = show cards
+
 
 data Hand = Hand {
         clubs    :: SuitHolding,
@@ -37,11 +76,6 @@ instance Show Hand where
 
 newtype Deck = Deck [Card]
                deriving (Show)
-
-newtype SuitHolding = SuitHolding [Rank]
-
-instance Show SuitHolding where
-    show (SuitHolding cards) = show cards
 
 data TableHands = TableHands {
         north :: Hand,
@@ -74,9 +108,6 @@ hcpValue _     = 0
 cardLength :: SuitHolding -> Int
 cardLength (SuitHolding rs) = length rs
 
-rankList :: SuitHolding -> [Rank]
-rankList (SuitHolding rs) = rs
-
 fullDeck :: Deck
 fullDeck = Deck [Card suit rank | suit <- [Clubs .. Spades], rank <- [Two .. Ace]]
 
@@ -93,56 +124,33 @@ dealHands (Deck d) = TableHands {
                         south = mkHand $ hands !! 3
                      }
                      where hands = map sort $ chunksOf 13 d
+                           mkHand :: [Card] -> Hand
+                           mkHand cards = Hand {
+                                            clubs    = SuitHolding $ ranks Clubs cards,
+                                            diamonds = SuitHolding $ ranks Diamonds cards,
+                                            hearts   = SuitHolding $ ranks Hearts cards,
+                                            spades   = SuitHolding $ ranks Spades cards
+                                        }
+                           ranks suit cs = sortBy (flip compare) [r | (Card s r) <- cs, suit == s]
 
-mkHand :: [Card] -> Hand
-mkHand cards = Hand {
-                clubs    = SuitHolding $ ranks Clubs cards,
-                diamonds = SuitHolding $ ranks Diamonds cards,
-                hearts   = SuitHolding $ ranks Hearts cards,
-                spades   = SuitHolding $ ranks Spades cards
-            }
-            where ranks suit cs = sortBy (flip compare) [r | (Card s r) <- cs, suit == s]
-
--- Display single-letter codes for suits
-instance Show Suit where
-   show Clubs    = "C"
-   show Diamonds = "D"
-   show Hearts   = "H"
-   show Spades   = "S"
-
-instance Show Rank where
-    show Ace   = "A"
-    show King  = "K"
-    show Queen = "Q"
-    show Jack  = "J"
-    show Ten   = "10"
-    show Nine  = "9"
-    show Eight = "8"
-    show Seven = "7"
-    show Six   = "6"
-    show Five  = "5"
-    show Four  = "4"
-    show Three = "3"
-    show Two   = "2"
-
-instance Show Bid where
-    show Pass           = "Pass"
-    show (Trump suit n) = show n ++ show suit
-    show (NT n)         = show n ++ "NT"
-    show (Dbl)          = "Dbl"
-    show (ReDbl)        = "ReDbl"
-
-showHonour :: Rank -> String
-showHonour rank
-    | isHonour rank = show rank
-    | otherwise     = "x"
-
+-- A Card is an 'Honour' if it is Ace, King, Queen or Jack.
 isHonour :: Rank -> Bool
 isHonour Ace    = True
 isHonour King   = True
 isHonour Queen  = True
 isHonour Jack   = True
 isHonour _      = False
+
+-- When looking at playing cards, non-honour cards are displayed as x o
+showHonour :: Rank -> String
+showHonour rank
+    | isHonour rank = show rank
+    | otherwise     = "x"
+
+-- When looking at playing card strength, cards are shown as e.g. "K-Q-x-x-x" (sometimes just KQxxx)
+showHonours :: SuitHolding -> String
+showHonours (SuitHolding rs) = intercalate "-" [showHonour n | n <- take 3 $ sortBy (flip compare) rs]
+
 
 suitLengths :: Hand -> [(Suit, Int)]
 suitLengths hand = [(suit, suitLength suit hand) | suit <- [Clubs .. Spades]]
@@ -358,9 +366,6 @@ playingTricksInHonours "A-K-J"  = 2.5
 playingTricksInHonours "A-K-Q"  = 3
 
 playingTricksInHonours _        = 0
-
-showHonours :: SuitHolding -> String
-showHonours (SuitHolding rs) = intercalate "-" [showHonour n | n <- take 3 $ sortBy (flip compare) rs]
 
 -- Make an opening bid
 openingBid :: Hand -> (Bid, [String])
