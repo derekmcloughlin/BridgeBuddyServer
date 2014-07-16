@@ -432,10 +432,10 @@ getOpeningResponse :: TableHands -> Maybe TableHands
 getOpeningResponse table = 
     case keepFindingBiddableHand table of
         Nothing -> Nothing
-        Just tbl -> do
-            case hcp (east tbl) <= 6 && hcp (south table) >= 6 of
-                True  -> Just tbl
-                False -> Nothing
+        Just tbl -> if hcp (east tbl) <= 6 && hcp (south table) >= 6 then
+                        Just tbl
+                    else
+                        Nothing
 
         
 
