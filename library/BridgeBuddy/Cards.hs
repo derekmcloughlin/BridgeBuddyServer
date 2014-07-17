@@ -23,6 +23,7 @@ module BridgeBuddy.Cards
     , cardLength
     , suitHolding
     , compareByLength 
+    , playingTricks 
 )
 where
 
@@ -210,4 +211,61 @@ numHonours sh = length (honours sh)
 -- A good 6-card suit is one headed by two honours
 hasGoodSixCard :: SuitHolding -> Bool
 hasGoodSixCard suit_holding = cardLength suit_holding >= 6 && numHonours suit_holding >= 2
+
+-- Calculate the number of playing tricks in the hand.
+-- Note: most systems have the concept of half a playing trick.
+-- Here we just round the final result down to the nearest Int.
+-- See http://www.rpbridge.net/8j17.htm for the system used here.
+-- K, Q-x, K-x, J-10-x, Q-x-x               0.5          A-K, K-Q-J, A-Q-10, A-K-x  2
+-- A, K-J, K-Q, A-x, Q-J-x, K-x-x, A-x-x    1            A-Q-J, A-K-J               2.5
+-- A-J, A-Q, K-J-10, K-Q-x, A-J-x, A-Q-x    1.5          A-K-Q                      3
+playingTricks :: Hand -> Int
+playingTricks hand = floor $ sum [playingTricksInSuit $ suitHolding suit hand | suit <- [Clubs .. Spades]]
+
+-- Calculate the playing tricks for cards in a suit
+-- We need to turn the suit holding into the form H-H-x where H is an
+-- honour (10 is included for this purpose) and 'x' is a non-honour card.
+-- We only count max of three cards for the calculation and
+-- then add the length if the length is > 3.
+playingTricksInSuit :: SuitHolding  -> Double
+playingTricksInSuit sh@(SuitHolding rs) = playingTricksInHonours (showHonours sh) + 
+                                            fromIntegral lengthTricks
+    where lengthTricks = if cardLength (SuitHolding rs) > 3
+                         then cardLength (SuitHolding rs) - 3
+                         else 0
+
+playingTricksInHonours :: String -> Double
+playingTricksInHonours "K"      = 0.5
+playingTricksInHonours "Q-x"    = 0.5
+playingTricksInHonours "K-x"    = 0.5
+playingTricksInHonours "J-10-x" = 0.5
+playingTricksInHonours "Q-x-x"  = 0.5
+
+playingTricksInHonours "A"      = 1
+playingTricksInHonours "K-J"    = 1
+playingTricksInHonours "K-Q"    = 1
+playingTricksInHonours "A-x"    = 1
+playingTricksInHonours "Q-J-x"  = 1
+playingTricksInHonours "K-x-x"  = 1
+playingTricksInHonours "A-x-x"  = 1
+
+playingTricksInHonours "A-J"    = 1.5
+playingTricksInHonours "A-Q"    = 1.5
+playingTricksInHonours "K-J-10" = 1.5
+playingTricksInHonours "K-Q-x"  = 1.5
+playingTricksInHonours "A-J-x"  = 1.5
+playingTricksInHonours "A-Q-x"  = 1.5
+
+playingTricksInHonours "A-K"    = 2
+playingTricksInHonours "K-Q-J"  = 2
+playingTricksInHonours "A-Q-10" = 2
+playingTricksInHonours "A-K-x"  = 2
+
+playingTricksInHonours "A-Q-J"  = 2.5
+playingTricksInHonours "A-K-J"  = 2.5
+
+playingTricksInHonours "A-K-Q"  = 3
+
+playingTricksInHonours _        = 0
+
 
