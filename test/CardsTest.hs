@@ -2,6 +2,7 @@ module Main where
 
 import Test.HUnit
 import BridgeBuddy.Cards
+import BridgeBuddy.OpeningBids
 
 import Test.Framework (defaultMain, testGroup)
 import Test.Framework.Providers.HUnit

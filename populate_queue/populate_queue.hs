@@ -8,6 +8,7 @@ import qualified Data.Map as Map
 import System.Random.Shuffle
 
 import BridgeBuddy.Cards
+import BridgeBuddy.OpeningBids
 import BridgeBuddy.CardsJson
 import FiniteWeightedList
 

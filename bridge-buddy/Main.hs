@@ -2,6 +2,7 @@ import System.Environment (getArgs)
 import Control.Monad
 
 import BridgeBuddy.Cards
+import BridgeBuddy.OpeningBids
 
 main :: IO ()
 main = do

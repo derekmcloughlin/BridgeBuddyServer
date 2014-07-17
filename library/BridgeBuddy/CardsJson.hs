@@ -3,6 +3,7 @@
 module BridgeBuddy.CardsJson where
 
 import BridgeBuddy.Cards
+import BridgeBuddy.OpeningBids
 
 import Data.Aeson (Value(String), toJSON, ToJSON, object)
 
