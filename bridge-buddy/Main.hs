@@ -3,6 +3,7 @@ import Control.Monad
 
 import BridgeBuddy.Cards
 import BridgeBuddy.OpeningBids
+import BridgeBuddy.OpeningResponses
 
 main :: IO ()
 main = do

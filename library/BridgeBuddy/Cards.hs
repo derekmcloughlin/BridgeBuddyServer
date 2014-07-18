@@ -24,6 +24,7 @@ module BridgeBuddy.Cards
     , suitHolding
     , compareByLength 
     , playingTricks 
+    , longestSuits 
 )
 where
 
@@ -267,5 +268,10 @@ playingTricksInHonours "A-K-J"  = 2.5
 playingTricksInHonours "A-K-Q"  = 3
 
 playingTricksInHonours _        = 0
+
+-- Sort a hand by the length of suits. If there are 2 or 3 equal-length suits, sort by Suit descending
+longestSuits :: Hand -> [(Suit, Int)]
+longestSuits hand = reverse [p | p <- suit_lengths, snd p == snd (head suit_lengths)]
+    where suit_lengths = sortBy (flip compareByLength) $ suitLengths hand
 
 

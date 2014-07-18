@@ -4,9 +4,6 @@ module BridgeBuddy.OpeningBids
 (
       getBiddableHand   
     , openingBid
-    , getOpeningResponse
-    , openingResponse
-    , keepFindingBiddableHand   -- TODO: this probably shouldn't be exported
     , hasStrong2Opening
     , isPremptable
 )
@@ -21,11 +18,6 @@ import BridgeBuddy.Cards
 
 isWeak1NTHand :: Hand -> Bool
 isWeak1NTHand hand = isBalanced hand && hcp hand `between` (12, 14)
-
--- Sort a hand by the length of suits. If there are 2 or 3 equal-length suits, sort by Suit descending
-longestSuits :: Hand -> [(Suit, Int)]
-longestSuits hand = reverse [p | p <- suit_lengths, snd p == snd (head suit_lengths)]
-    where suit_lengths = sortBy (flip compareByLength) $ suitLengths hand
 
 -- Rules for bidding suits.
 -- This relies on the array being sorted by suit.
@@ -66,13 +58,13 @@ bidSuit hand = bidLongestSuit longest_suits
 openingBidWithLog :: Hand -> Writer [String] Bid
 openingBidWithLog hand
     | isWeak1NTHand hand && hasGoodFiveCard (spades hand) = do
-        tell ["Balanced hand, but has a five card major in Spades."]
+        tell ["Balanced hand, 12-14 points, but has a five card major in Spades."]
         return (Trump Spades 1)
     | isWeak1NTHand hand && hasGoodFiveCard (hearts hand) = do
-        tell ["Balanced hand, but has a five card major in Hearts."]
+        tell ["Balanced hand, 12-14 points, but has a five card major in Hearts."]
         return (Trump Hearts 1)
     | isWeak1NTHand hand = do
-        tell ["Balanced hand 12-14 points."]
+        tell ["Balanced hand 12-14 points, no 5-card major."]
         return (NT 1)
     | isBalanced hand && hcp hand `between` (20, 22) = do
         tell ["Balanced hand 20-22 points."]
@@ -172,89 +164,3 @@ getBiddableHand :: IO Hand
 getBiddableHand = do
     hands <- getBiddableHands
     return (head hands)
-
--- Rotate the table anti-clockwise so that 'East' becomes 'North etc.
--- Used to ensure that the first biddable hand is North 
-rotate :: TableHands -> TableHands
-rotate th = TableHands {
-        north = east th,
-        east  = south th,
-        south = west th,
-        west  = north th
-    }
-
--- Go through the hands from North, East, South, West to find the
--- first biddable one, then make that North.
--- This allows us to look for responses where East is weak
--- and South can possibly respond.
-keepFindingBiddableHand :: TableHands -> Maybe TableHands
-keepFindingBiddableHand table = innerFind 0 table
-    where 
-        innerFind :: Int -> TableHands -> Maybe TableHands
-        innerFind num_rotations tbl
-            | num_rotations == 4 = Nothing  -- Passed out
-            | otherwise = do
-                let (northsBid, _) = openingBid $ north tbl
-                case northsBid of
-                    Pass    -> innerFind (num_rotations + 1) $ rotate tbl
-                    _       -> Just tbl
-
-
--- Find a table where North has an opening bid, East is
--- weak (defined here as <= 6 hcp) and where South has >= 6 hcp
-getOpeningResponse :: TableHands -> Maybe TableHands
-getOpeningResponse table = 
-    case keepFindingBiddableHand table of
-        Nothing -> Nothing
-        Just tbl -> if hcp (east tbl) <= 6 && hcp (south table) >= 6 then
-                        Just tbl
-                    else
-                        Nothing
-
-        
--- Get the response to an opening bid.
--- bid = North's opening bid. 
--- hand = South's hand
--- Return value is South's response
-openingResponse :: Bid -> Hand -> (Bid, [String])
-openingResponse bid hand = runWriter $ openingResponseWithLog bid hand
-
-openingResponseWithLog :: Bid -> Hand -> Writer [String] Bid
-openingResponseWithLog (NT 1) hand 
-    -- Balanced responses
-    | isBalanced hand && not (hasGoodFiveCardMajor hand) && hcp hand <= 10 = do
-        tell ["Balanced hand but too weak to respond."]
-        return Pass
-    | isBalanced hand && hcp hand `elem` [11, 12] = do
-        tell ["Balanced hand with 11 or 12 hcp"]
-        tell ["Respond NT 2 - invitation to game"]
-        return (NT 2)
-    | isBalanced hand && hcp hand `elem` [13..18] = do
-        tell ["Balanced hand and hcp between 13 and 18 - go to game"]
-        return (NT 3)
-    | isBalanced hand && hcp hand `elem` [19..20] = do
-        tell ["Balanced hand and 19 or 20 points"]
-        tell ["Respond NT 4 - invitation to 6NT"]
-        return (NT 4)
-    -- Unbalanced responses
-    | hcp hand <= 10 = do
-        tell ["Unbalanced hand with <= 10 HCP"]
-        respondLongestSuit $ longestSuits hand
-    | otherwise = do
-        tell ["Unknown config for 1NT"]
-        return Pass
-
-openingResponseWithLog _ _ = do
-    tell ["Only doing 1NT responses"]
-    return Pass
-
-respondLongestSuit :: [(Suit, Int)] -> Writer [String] Bid
-respondLongestSuit [(suit, _)] = do
-    tell ["Weak take out."]
-    tell ["One long suit - bid it."]
-    return (Trump suit 2)   -- Weak take out
-
-respondLongestSuit  _ = do
-    tell ["Unknown configuration for longest suit response - pass."]
-    return Pass
-
