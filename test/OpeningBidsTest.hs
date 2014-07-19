@@ -13,7 +13,18 @@ tests = [     testRule20A
             , testRule20B
             , testRule20C
             , testRule20D
+            , testStrong2OpeningA
+            , testStrong2OpeningB
+            , testSuitA
+            , testSuitB
+            , testSuitC
+            , testSuitD
+            , testSuitE
+            , testSuitF
+            , testSuitG
+            , testSuitH
             , testPremptA
+            , testPremptB
         ]
 
 testRule20A :: Test
@@ -95,7 +106,7 @@ testSuitD = testCase "testSuitD" $ do
         diamonds = SuitHolding [Jack, Six, Five, Three, Two],
         clubs    = SuitHolding [Ace, King, Five, Three, Two]
     }
-    assertEqual "TTest suit biddng with a 5521 shape" (Trump Diamonds 1) (fst (openingBid hand))
+    assertEqual "Test suit biddng with a 5521 shape" (Trump Diamonds 1) (fst (openingBid hand))
 
 testSuitE :: Test
 testSuitE = testCase "testSuitE" $ do
@@ -145,7 +156,7 @@ testStrong2OpeningA = testCase "testStrong2OpeningA" $ do
         diamonds = SuitHolding [Ace, Six, Three],
         clubs    = SuitHolding []
     }
-    assertEqual "Test hand with 19 points and >= 2 honours in the 6-card suit" (Just Spades) $ hasStrong2Opening hand
+    assertEqual "Test hand with 19 points and >= 2 honours in the 6-card suit" (Trump Spades 2) (fst $ openingBid hand)
 
 testStrong2OpeningB :: Test
 testStrong2OpeningB = testCase "testStrong2OpeningA" $ do
@@ -155,15 +166,25 @@ testStrong2OpeningB = testCase "testStrong2OpeningA" $ do
         diamonds = SuitHolding [Ace, Three],
         clubs    = SuitHolding []
     }
-    assertEqual "This hand has 16 points but ony 1 honour in spades" Nothing $ hasStrong2Opening hand
+    assertEqual "This hand has 16 points but ony 1 honour in spades" (Trump Spades 1) (fst $ openingBid hand)
 
 
 testPremptA :: Test
-testPremptA = testCase "testPrempt_a" $ do
+testPremptA = testCase "testPremptA" $ do
     let hand = Hand {
         spades   = SuitHolding [King, Queen, Nine, Seven, Six, Five, Four],
         hearts   = SuitHolding [King, Jack, Three],
         diamonds = SuitHolding [Seven, Six],
         clubs    = SuitHolding [Five]
     }
-    assertBool "Hand should be pre-emptable" (fst (isPremptable hand))
+    assertEqual "Hand should be pre-emptable" (Trump Spades 3) (fst (openingBid hand))
+
+testPremptB :: Test
+testPremptB = testCase "testPremptB" $ do
+    let hand = Hand {
+        spades   = SuitHolding [King, Queen, Nine, Seven, Six, Five, Four],
+        hearts   = SuitHolding [King, Jack, Three],
+        diamonds = SuitHolding [Seven, Six],
+        clubs    = SuitHolding [Ace]
+    }
+    assertEqual "Hand should NOT be pre-emptable" (Trump Spades 1) (fst (openingBid hand))

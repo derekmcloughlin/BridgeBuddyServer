@@ -4,8 +4,6 @@ module BridgeBuddy.OpeningBids
 (
       getBiddableHand   
     , openingBid
-    , hasStrong2Opening
-    , isPremptable
 )
 where
 
