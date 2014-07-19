@@ -105,7 +105,8 @@ isPremptable hand = (hcp hand < 10 && has7cardsuit && has2OfTop3Honours hand lon
                           has7cardsuit       = len >= 7
 
 has2OfTop3Honours :: Hand -> Suit -> Bool
-has2OfTop3Honours hand suit = length (filter (== True) $ map (hasRankInSuit hand suit) [Ace, King, Queen]) >= 2
+has2OfTop3Honours hand suit = length (filter (== True) topHonours) >= 2
+    where topHonours = map (hasRankInSuit hand suit) [Ace, King, Queen] 
 
 hasRankInSuit :: Hand -> Suit -> Rank -> Bool
 hasRankInSuit hand suit rank = rank `elem` rs

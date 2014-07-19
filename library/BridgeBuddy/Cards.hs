@@ -43,7 +43,8 @@ instance Show Suit where
    show Spades   = "S"
 
 
-data Rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace
+data Rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | 
+            Jack | Queen | King | Ace
             deriving (Eq, Ord, Enum)
 
 instance Show Rank where
@@ -143,20 +144,20 @@ shuffleDeck (Deck d) = do
 
 dealHands :: Deck -> TableHands
 dealHands (Deck d) = TableHands {
-                        north = mkHand $ hands !! 0,
-                        east  = mkHand $ hands !! 1,
-                        west  = mkHand $ hands !! 2,
-                        south = mkHand $ hands !! 3
-                     }
-                     where hands = map sort $ chunksOf 13 d
-                           mkHand :: [Card] -> Hand
-                           mkHand cards = Hand {
-                                            clubs    = SuitHolding $ ranks Clubs cards,
-                                            diamonds = SuitHolding $ ranks Diamonds cards,
-                                            hearts   = SuitHolding $ ranks Hearts cards,
-                                            spades   = SuitHolding $ ranks Spades cards
-                                        }
-                           ranks suit cs = sortBy (flip compare) [r | (Card s r) <- cs, suit == s]
+        north = mkHand $ hands !! 0,
+        east  = mkHand $ hands !! 1,
+        west  = mkHand $ hands !! 2,
+        south = mkHand $ hands !! 3
+    }
+    where hands = map sort $ chunksOf 13 d
+          mkHand :: [Card] -> Hand
+          mkHand cards = Hand {
+            clubs    = SuitHolding $ ranks Clubs cards,
+            diamonds = SuitHolding $ ranks Diamonds cards,
+            hearts   = SuitHolding $ ranks Hearts cards,
+            spades   = SuitHolding $ ranks Spades cards
+          }
+          ranks suit cs = sortBy (flip compare) [r | (Card s r) <- cs, suit == s]
 
 -- A Card is an 'Honour' if it is Ace, King, Queen or Jack.
 isHonour :: Rank -> Bool
@@ -172,15 +173,17 @@ showHonour rank
     | isHonour rank = show rank
     | otherwise     = "x"
 
--- When looking at playing card strength, cards are shown as e.g. "K-Q-x-x-x" (sometimes just KQxxx)
+-- When looking at playing card strength, cards are shown 
+-- as e.g. "K-Q-x-x-x" (sometimes just KQxxx)
 showHonours :: SuitHolding -> String
-showHonours (SuitHolding rs) = intercalate "-" [showHonour n | n <- take 3 $ sortBy (flip compare) rs]
+showHonours (SuitHolding rs) = intercalate "-" 
+                                [showHonour n | n <- take 3 $ sortBy (flip compare) rs]
 
-
+-- Get the lenghts of each suit in a hand
 suitLengths :: Hand -> [(Suit, Int)]
 suitLengths hand = [(suit, suitLength suit hand) | suit <- [Clubs .. Spades]]
 
--- Get the length of a suit in a hand
+-- Get the length of a single suit in a hand
 suitLength :: Suit -> Hand -> Int
 suitLength suit hand = cardLength $ suitHolding suit hand
 
@@ -193,8 +196,9 @@ isBalanced hand = 0 `notElem` suit_lengths &&  -- no voids
                   where suit_lengths = [len | (_, len) <- suitLengths hand]
 
 -- Helper function to sort a suit by the length
+-- Note: we ignore the suits and just look at the length
 compareByLength :: (Suit, Int) -> (Suit, Int) -> Ordering
-compareByLength (_, n1) (_, n2) = compare n1 n2 -- ignore the suits and just look at the length
+compareByLength (_, n1) (_, n2) = compare n1 n2 
 
 hasGoodFiveCardMajor :: Hand -> Bool
 hasGoodFiveCardMajor hand = hasGoodFiveCard (spades hand) || hasGoodFiveCard (hearts hand)
@@ -211,7 +215,8 @@ numHonours sh = length (honours sh)
 
 -- A good 6-card suit is one headed by two honours
 hasGoodSixCard :: SuitHolding -> Bool
-hasGoodSixCard suit_holding = cardLength suit_holding >= 6 && numHonours suit_holding >= 2
+hasGoodSixCard suit_holding = cardLength suit_holding >= 6 && 
+                                numHonours suit_holding >= 2
 
 -- Calculate the number of playing tricks in the hand.
 -- Note: most systems have the concept of half a playing trick.
