@@ -13,3 +13,4 @@ cabal-dev
 Vagrantfile
 cabal.sandbox.config
 .hpc
+tags
