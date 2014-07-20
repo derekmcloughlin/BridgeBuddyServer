@@ -12,6 +12,17 @@ import BridgeBuddy.Cards
 import BridgeBuddy.OpeningBids
 
 
+-- Find a table where North has an opening bid, East is
+-- weak (defined here as <= 6 hcp) and where South has >= 6 hcp
+getOpeningResponse :: TableHands -> Maybe TableHands
+getOpeningResponse table = 
+    case keepFindingBiddableHand table of
+        Nothing -> Nothing
+        Just tbl -> if hcp (east tbl) <= 6 && hcp (south table) >= 6 then
+                        Just tbl
+                    else
+                        Nothing
+
 -- Rotate the table anti-clockwise so that 'East' becomes 'North etc.
 -- Used to ensure that the first biddable hand is North 
 rotate :: TableHands -> TableHands
@@ -38,17 +49,6 @@ keepFindingBiddableHand table = innerFind 0 table
                     Pass    -> innerFind (num_rotations + 1) $ rotate tbl
                     _       -> Just tbl
 
-
--- Find a table where North has an opening bid, East is
--- weak (defined here as <= 6 hcp) and where South has >= 6 hcp
-getOpeningResponse :: TableHands -> Maybe TableHands
-getOpeningResponse table = 
-    case keepFindingBiddableHand table of
-        Nothing -> Nothing
-        Just tbl -> if hcp (east tbl) <= 6 && hcp (south table) >= 6 then
-                        Just tbl
-                    else
-                        Nothing
 
         
 -- Get the response to an opening bid.
