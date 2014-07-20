@@ -13,6 +13,15 @@ import Data.List
 import BridgeBuddy.Utils
 import BridgeBuddy.Cards
 
+-- Make an opening bid
+openingBid :: Hand -> (Bid, [String])
+openingBid hand = runWriter $ openingBidWithLog hand
+
+-- Get a single biddable hand
+getBiddableHand :: IO Hand
+getBiddableHand = do
+    hands <- getBiddableHands
+    return (head hands)
 
 isWeak1NTHand :: Hand -> Bool
 isWeak1NTHand hand = isBalanced hand && hcp hand `between` (12, 14)
@@ -31,16 +40,20 @@ bidLongestSuit [(suit, _), (_, _)] = do
     tell ["Bid the higher ranking of two equal-length suits."]
     return (Trump suit 1)
 bidLongestSuit [(Spades, 4), (Hearts, 4),   (Diamonds, 4)] = do
-    tell ["Shape is 4441 with a singleton club - bid the middle of the 3 touching suits."]
+    tell ["Shape is 4441 with a singleton club."]
+    tell ["Bid the middle of the 3 touching suits."]
     return (Trump Hearts 1)
 bidLongestSuit [(Hearts, 4), (Diamonds, 4), (Clubs, 4)] = do
-    tell ["Shape is 4441 with a singleton spade - bid the middle of the 3 touching suits."]
+    tell ["Shape is 4441 with a singleton spade."]
+    tell ["Bid the middle of the 3 touching suits."]
     return (Trump Diamonds 1)
 bidLongestSuit [(Spades, 4), (Hearts, 4),   (Clubs, 4)] = do
-    tell ["Shape is 4441 with a singleton diamond - bid the suit below."]
+    tell ["Shape is 4441 with a singleton diamond."]
+    tell ["Bid the suit below."]
     return (Trump Clubs 1)
 bidLongestSuit [(Spades, 4), (Diamonds, 4), (Clubs, 4)] = do
-    tell ["Shape is 4441 with a singleton heart - bid the suit below."]
+    tell ["Shape is 4441 with a singleton heart."]
+    tell ["Bid the suit below."]
     return (Trump Diamonds 1)
 bidLongestSuit _ = do
     tell ["Unknown configuration for longest suit bid - pass."]
@@ -136,10 +149,6 @@ ruleOfTwenty hand = hcp hand `between` (10, 11) &&
                     (hcp hand + sum [snd q | q <- twoLongestSuits]) >= 20
     where twoLongestSuits = take 2 $ sortBy (flip compareByLength) $ suitLengths hand
 
--- Make an opening bid
-openingBid :: Hand -> (Bid, [String])
-openingBid hand = runWriter $ openingBidWithLog hand
-
 -- Take a dealt deck and return any hands that have an opening bid
 biddableHands :: TableHands -> [Hand]
 biddableHands table_hands = filter (\h -> isBiddable h || isNearlyBiddable h ) hands
@@ -158,8 +167,3 @@ getBiddableHands = do
             0 -> getBiddableHands
             _ -> return hands
 
--- Get a single biddable hand
-getBiddableHand :: IO Hand
-getBiddableHand = do
-    hands <- getBiddableHands
-    return (head hands)
