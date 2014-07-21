@@ -89,7 +89,7 @@ openingBidWithLog hand
         tell ["Good 6+ card suit or two good 5-4 suits"]
         tell ["Strong two opening"]
         return (Trump suit 2)
-    | not (isBalanced hand) && hcp hand `between` (12, 19) = do
+    | not (isBalanced hand) && hcp hand `between` (12, 22) = do
         tell ["Unbalanced hand so bid a suit."]
         bidSuit hand
     | ruleOfTwenty hand = do
